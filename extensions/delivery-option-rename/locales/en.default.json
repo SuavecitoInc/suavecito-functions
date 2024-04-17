@@ -1,0 +1,4 @@
+{
+  "name": "Delivery Option Rename",
+  "description": "Renames a delivery option. Appends a message to the delivery option name."
+}

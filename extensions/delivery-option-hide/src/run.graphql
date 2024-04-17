@@ -1,0 +1,31 @@
+query RunInput {
+  cart {
+    attribute(key: "_sp_dc_key") {
+      key
+      value
+    }
+    lines {
+      attribute(key: "_sp_dc_key") {
+        key
+        value
+      }
+    }
+    deliveryGroups {
+      deliveryAddress {
+        provinceCode
+      }
+      deliveryOptions {
+        handle
+        title
+      }
+    }
+  }
+  deliveryCustomization {
+    metafield(
+      namespace: "$app:delivery-option-hide"
+      key: "function-configuration"
+    ) {
+      value
+    }
+  }
+}
