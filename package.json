@@ -1,5 +1,5 @@
 {
-  "name": "shopify-functions",
+  "name": "suavecito-functions",
   "private": true,
   "scripts": {
     "build": "vite build && vite build --ssr",
