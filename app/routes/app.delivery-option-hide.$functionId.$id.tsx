@@ -65,8 +65,9 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   return {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      stateProvinceCode: "",
-      message: "",
+      customPropKey: "",
+      customPropType: "",
+      shipOptionTitleMatch: "",
     }),
   };
 };

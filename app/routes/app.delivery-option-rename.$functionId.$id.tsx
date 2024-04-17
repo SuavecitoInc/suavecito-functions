@@ -54,7 +54,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     return {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        stateProvinceCode: metafieldValue.stateProvinceCode,
+        shipOptionTitleMatch: metafieldValue.shipOptionTitleMatch,
         message: metafieldValue.message,
       }),
     };
@@ -63,7 +63,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   return {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      stateProvinceCode: "",
+      shipOptionTitleMatch: "",
       message: "",
     }),
   };
@@ -74,12 +74,14 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   const { admin } = await authenticate.admin(request);
   const formData = await request.formData();
 
-  const stateProvinceCode = formData.get("stateProvinceCode");
+  const shipOptionTitleMatch = formData.get("shipOptionTitleMatch");
   const message = formData.get("message");
+
+  const title = `Change ${shipOptionTitleMatch} delivery message`;
 
   const deliveryCustomizationInput = {
     functionId,
-    title: `Change ${stateProvinceCode} delivery message`,
+    title,
     enabled: true,
     metafields: [
       {
@@ -87,7 +89,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
         key: "function-configuration",
         type: "json",
         value: JSON.stringify({
-          stateProvinceCode,
+          shipOptionTitleMatch,
           message,
         }),
       },
@@ -154,15 +156,15 @@ export default function DeliveryCustomization() {
   const navigation = useNavigation();
   const loaderData = useLoaderData<any>();
 
-  const [stateProvinceCode, setStateProvinceCode] = useState(
-    loaderData.stateProvinceCode,
+  const [shipOptionTitleMatch, setShipOptionTitleMatch] = useState(
+    loaderData.shipOptionTitleMatch,
   );
   const [message, setMessage] = useState(loaderData.message);
 
   useEffect(() => {
     if (loaderData) {
       const parsedData = JSON.parse(loaderData.body);
-      setStateProvinceCode(parsedData.stateProvinceCode);
+      setShipOptionTitleMatch(parsedData.shipOptionTitleMatch);
       setMessage(parsedData.message);
     }
   }, [loaderData]);
@@ -194,7 +196,7 @@ export default function DeliveryCustomization() {
   ) : null;
 
   const handleSubmit = () => {
-    submit({ stateProvinceCode, message }, { method: "post" });
+    submit({ shipOptionTitleMatch, message }, { method: "post" });
   };
 
   return (
@@ -228,11 +230,11 @@ export default function DeliveryCustomization() {
               <FormLayout>
                 <FormLayout.Group>
                   <TextField
-                    name="stateProvinceCode"
+                    name="shipOptionTitleMatch"
                     type="text"
-                    label="State/Province code"
-                    value={stateProvinceCode}
-                    onChange={setStateProvinceCode}
+                    label="Ship Option Title Match"
+                    value={shipOptionTitleMatch}
+                    onChange={setShipOptionTitleMatch}
                     disabled={isLoading}
                     requiredIndicator
                     autoComplete="on"

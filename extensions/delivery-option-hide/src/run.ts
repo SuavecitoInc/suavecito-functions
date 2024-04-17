@@ -51,7 +51,7 @@ export function run(input: { deliveryCustomization: any; cart?: any }) {
   const hasMatch =
     propType === "line_item" ? hasLineCustomAttribute : hasCustomAttribute;
 
-  let toRename = input.cart.deliveryGroups
+  let toRemove = input.cart.deliveryGroups
     .flatMap((group: { deliveryOptions: any }) => group.deliveryOptions)
     .filter((option: { handle: any; title: any }) => {
       console.log("TITLE", option.title);
@@ -70,6 +70,6 @@ export function run(input: { deliveryCustomization: any; cart?: any }) {
     }));
 
   return {
-    operations: toRename,
+    operations: toRemove,
   };
 }
