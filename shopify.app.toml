@@ -3,7 +3,7 @@
 client_id = "7431687ef99661f19e161a30ac9527fa"
 name = "Suavecito Functions"
 handle = "suavecito-functions"
-application_url = "https://instead-timing-boundaries-gm.trycloudflare.com"
+application_url = "https://thailand-comparable-respective-animals.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_delivery_customizations,write_products"
 
 [auth]
 redirect_urls = [
-  "https://instead-timing-boundaries-gm.trycloudflare.com/auth/callback",
-  "https://instead-timing-boundaries-gm.trycloudflare.com/auth/shopify/callback",
-  "https://instead-timing-boundaries-gm.trycloudflare.com/api/auth/callback"
+  "https://thailand-comparable-respective-animals.trycloudflare.com/auth/callback",
+  "https://thailand-comparable-respective-animals.trycloudflare.com/auth/shopify/callback",
+  "https://thailand-comparable-respective-animals.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
