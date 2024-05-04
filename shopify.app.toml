@@ -3,7 +3,7 @@
 client_id = "7431687ef99661f19e161a30ac9527fa"
 name = "Suavecito Functions"
 handle = "suavecito-functions"
-application_url = "https://writers-buttons-satisfied-bald.trycloudflare.com"
+application_url = "https://republican-wp-grounds-gives.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_delivery_customizations,write_products"
 
 [auth]
 redirect_urls = [
-  "https://writers-buttons-satisfied-bald.trycloudflare.com/auth/callback",
-  "https://writers-buttons-satisfied-bald.trycloudflare.com/auth/shopify/callback",
-  "https://writers-buttons-satisfied-bald.trycloudflare.com/api/auth/callback"
+  "https://republican-wp-grounds-gives.trycloudflare.com/auth/callback",
+  "https://republican-wp-grounds-gives.trycloudflare.com/auth/shopify/callback",
+  "https://republican-wp-grounds-gives.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
