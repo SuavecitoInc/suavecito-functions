@@ -36,4 +36,6 @@ Delivery Option Hide
 
 Delivery Option Rename
 
-- Work in Progress
+- This function renames a `delivery option` by appending a message to the end of the title
+- Set the custom property (cart attribute or line item property) and value to match against
+- Set the Ship Option Title / Name to match against
