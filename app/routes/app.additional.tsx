@@ -48,11 +48,29 @@ export default function AdditionalPage() {
               <List>
                 <List.Item>
                   <Link
+                    url="https://shopify.dev/docs/apps/getting-started/build-app-example"
+                    target="_blank"
+                    removeUnderline
+                  >
+                    App get started guide
+                  </Link>
+                </List.Item>
+                <List.Item>
+                  <Link
                     url="https://shopify.dev/docs/apps/design-guidelines/navigation#app-nav"
                     target="_blank"
                     removeUnderline
                   >
                     App nav best practices
+                  </Link>
+                </List.Item>
+                <List.Item>
+                  <Link
+                    url="https://shopify.dev/docs/apps/tools/graphiql-admin-api"
+                    target="_blank"
+                    removeUnderline
+                  >
+                    Explore Shopify’s API with GraphiQL
                   </Link>
                 </List.Item>
               </List>
