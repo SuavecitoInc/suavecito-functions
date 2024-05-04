@@ -2,7 +2,11 @@
 
 > Shopify Functions allow developers to customize the backend logic of Shopify.
 
-[Shopify Functions Overviw](https://shopify.dev/docs/apps/functions)
+<p align="center">
+  <img src="./public/suavecito-functions-logo.png" alt="Suavecito Functions" width="300">
+</p>
+
+[Shopify Functions Overview](https://shopify.dev/docs/apps/functions)
 
 ## Dev
 
