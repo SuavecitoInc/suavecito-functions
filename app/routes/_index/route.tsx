@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+// import { Form, useLoaderData } from "@remix-run/react";
 
 import { login } from "../../shopify.server";
 
@@ -17,16 +17,16 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export default function App() {
-  const { showForm } = useLoaderData<typeof loader>();
+  // const { showForm } = useLoaderData<typeof loader>();
 
   return (
     <div className={styles.index}>
       <div className={styles.content}>
-        <h1 className={styles.heading}>A short heading about [your app]</h1>
-        <p className={styles.text}>
+        <h1 className={styles.heading}>Hello friend...</h1>
+        {/* <p className={styles.text}>
           A tagline about [your app] that describes your value proposition.
-        </p>
-        {showForm && (
+        </p> */}
+        {/* {showForm && (
           <Form className={styles.form} method="post" action="/auth/login">
             <label className={styles.label}>
               <span>Shop domain</span>
@@ -51,7 +51,7 @@ export default function App() {
             <strong>Product feature</strong>. Some detail about your feature and
             its benefit to your customer.
           </li>
-        </ul>
+        </ul> */}
       </div>
     </div>
   );
