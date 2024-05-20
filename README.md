@@ -26,6 +26,15 @@ shopify app deploy
 shopify app generate extension --template delivery_customization --name delivery-customization
 ```
 
+## Deployment Environmental Variables
+
+```bash
+SHOPIFY_API_KEY=
+SHOPIFY_API_SECRET=
+SHOPIFY_APP_URL=https://functions.suavecito.com
+SCOPES=write_delivery_customizations,write_products
+```
+
 ## Functions
 
 <p align="center">
@@ -54,5 +63,4 @@ Delivery Option Rename
 
 <p align="center">
   <img src="./screenshots/suavecito-functions-delivery-option-rename.jpg" alt="Delivery Option Rename" width="1200">
-
 </p>
