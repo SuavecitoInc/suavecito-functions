@@ -3,7 +3,7 @@
 client_id = "7431687ef99661f19e161a30ac9527fa"
 name = "Suavecito Functions"
 handle = "suavecito-functions"
-application_url = "https://lesson-required-aspects-warming.trycloudflare.com"
+application_url = "https://realtor-wit-hudson-adapted.trycloudflare.com"
 embedded = true
 
 [build]
@@ -13,13 +13,13 @@ include_config_on_deploy = true
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "write_delivery_customizations,write_products"
+scopes = "write_content,write_delivery_customizations,write_discounts,write_products"
 
 [auth]
 redirect_urls = [
-  "https://lesson-required-aspects-warming.trycloudflare.com/auth/callback",
-  "https://lesson-required-aspects-warming.trycloudflare.com/auth/shopify/callback",
-  "https://lesson-required-aspects-warming.trycloudflare.com/api/auth/callback"
+  "https://realtor-wit-hudson-adapted.trycloudflare.com/auth/callback",
+  "https://realtor-wit-hudson-adapted.trycloudflare.com/auth/shopify/callback",
+  "https://realtor-wit-hudson-adapted.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
