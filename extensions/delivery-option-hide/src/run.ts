@@ -36,20 +36,37 @@ export function run(input: { deliveryCustomization: any; cart?: any }) {
     return NO_CHANGES;
   }
 
+  console.log("input", input);
+
   const key = "_sp_dc_key";
   const propType = configuration.customPropType;
   const value = configuration.customPropKey;
   const titleMatch = configuration.shipOptionTitleMatch;
+
   const hasCustomAttribute =
     input.cart.attribute?.key === key &&
     input.cart.attribute?.value.toLowerCase() === value.toLowerCase();
+
   const hasLineCustomAttribute = input.cart.lines.some(
     (lineItem: { attribute: { key: string; value: string } }) =>
       lineItem.attribute?.key === key &&
       lineItem.attribute?.value.toLowerCase() === value.toLowerCase(),
   );
+
   const hasMatch =
     propType === "line_item" ? hasLineCustomAttribute : hasCustomAttribute;
+  console.log("PROP TYPE", propType);
+
+  const hasAnyCustomAttribute = input.cart.attribute?.key.length > 0;
+  console.log("HAS ANY CUSTOM ATTRIBUTE", hasAnyCustomAttribute);
+  const hasAnyLineCustomAttribute = input.cart.lines.some(
+    (lineItem: { attribute: { key: string; value: string } }) =>
+      lineItem.attribute?.key.length > 0,
+  );
+  console.log("HAS ANY LINE CUSTOM ATTRIBUTE", hasAnyLineCustomAttribute);
+
+  const hideOnNone =
+    propType === "none" && !hasAnyCustomAttribute && !hasAnyLineCustomAttribute;
 
   let toRemove = input.cart.deliveryGroups
     .flatMap((group: { deliveryOptions: any }) => group.deliveryOptions)
@@ -58,9 +75,13 @@ export function run(input: { deliveryCustomization: any; cart?: any }) {
       console.log("INCLUDES TITLE", option.title.includes(titleMatch));
       console.log("HAS CUSTOM ATTRIBUTE", hasCustomAttribute);
       console.log("HAS LINE CUSTOM ATTRIBUTE", hasLineCustomAttribute);
+      console.log("HIDE ON NONE", hideOnNone);
+      console.log("-----------------");
       return (
-        hasMatch &&
-        option.title.toLowerCase().includes(titleMatch.toLowerCase())
+        (hasMatch &&
+          option.title.toLowerCase().includes(titleMatch.toLowerCase())) ||
+        (hideOnNone &&
+          option.title.toLowerCase().includes(titleMatch.toLowerCase()))
       );
     })
     .map((option: { handle: any }) => /** @type {Operation} */ ({

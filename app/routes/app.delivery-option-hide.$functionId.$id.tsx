@@ -90,6 +90,10 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
       name: "Cart",
       type: "Attribute",
     },
+    none: {
+      name: "None",
+      type: "N/A",
+    },
   };
   // @ts-expect-error
   const title = `Hide Ship Option: Change ${t[customPropType]?.name} ${t[customPropType]?.type} | Match: ${shipOptionTitleMatch}`;
@@ -182,6 +186,7 @@ export default function DeliveryCustomization() {
     { label: "Select a type", value: "" },
     { label: "Line Item", value: "line_item" },
     { label: "Cart", value: "cart" },
+    { label: "None", value: "none" },
   ];
 
   useEffect(() => {
