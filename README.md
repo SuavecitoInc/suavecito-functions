@@ -41,7 +41,7 @@ SCOPES=write_delivery_customizations,write_products
   <img src="./screenshots/suavecito-functions-embed.jpg" alt="Suavecito Functions" width="1200">
 </p>
 
-### Shopify Delivery Customization
+### Delivery Customization
 
 > You can use delivery customizations to hide, reorder, and rename the delivery options that are available to buyers during checkout.
 
@@ -63,4 +63,18 @@ Delivery Option Rename
 
 <p align="center">
   <img src="./screenshots/suavecito-functions-delivery-option-rename.jpg" alt="Delivery Option Rename" width="1200">
+</p>
+
+### Product Discounts
+
+> The Product Discount API enables you to create a new type of discount that is applied to a particular product or product variant in the cart.
+
+Product Discount
+
+- This function creates a product variant discount the discount is limited to a percentage of the original price
+- Product variants can be excluded by sku and or vendor
+- To exclude a product variant from all discounts created by this app, simply set the Suavecito Function - Exclude from all discounts metafield to true
+
+<p align="center">
+  <img src="./screenshots/suavecito-functions-product-discount.jpg" alt="Delivery Option Rename" width="1200">
 </p>
