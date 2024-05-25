@@ -32,7 +32,7 @@ shopify app generate extension --template delivery_customization --name delivery
 SHOPIFY_API_KEY=
 SHOPIFY_API_SECRET=
 SHOPIFY_APP_URL=https://functions.suavecito.com
-SCOPES=write_delivery_customizations,write_products
+SCOPES=write_delivery_customizations,write_products,write_content
 ```
 
 ## Functions
