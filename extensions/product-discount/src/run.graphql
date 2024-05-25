@@ -1,0 +1,31 @@
+query RunInput {
+  cart {
+    lines {
+      quantity
+      merchandise {
+        __typename
+        ... on ProductVariant {
+          id
+          sku
+          product {
+            vendor
+          }
+          excludeFromAllDiscounts: metafield(
+            namespace: "suavecito_function"
+            key: "exclude_from_all_discounts"
+          ) {
+            value
+          }
+        }
+      }
+    }
+  }
+  discountNode {
+    metafield(
+      namespace: "$app:product-discount"
+      key: "function-configuration"
+    ) {
+      value
+    }
+  }
+}

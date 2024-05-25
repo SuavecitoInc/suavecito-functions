@@ -26,8 +26,42 @@ const shopify = shopifyApp({
     },
   },
   hooks: {
-    afterAuth: async ({ session }) => {
+    afterAuth: async ({ session, admin }) => {
       shopify.registerWebhooks({ session });
+      // create required metafields
+      const response: Response = await admin.graphql(
+        `#graphql
+        mutation CreateMetafieldDefinition($definition: MetafieldDefinitionInput!) {
+          metafieldDefinitionCreate(definition: $definition) {
+            createdDefinition {
+              id
+              name
+            }
+            userErrors {
+              field
+              message
+              code
+            }
+          }
+        }`,
+        {
+          variables: {
+            definition: {
+              name: "Suavecito Function - Exclude from all discounts",
+              namespace: "suavecito_function",
+              key: "exclude_from_all_discounts",
+              description:
+                "Exclude this product variant from all discounts created by the Suavecito Functions app.",
+              type: "boolean",
+              ownerType: "PRODUCTVARIANT",
+            },
+          },
+        },
+      );
+
+      const responseJson = await response.json();
+      console.log("responseJson", JSON.stringify(responseJson, null, 2));
+      // end create required metafields
     },
   },
   future: {

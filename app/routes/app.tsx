@@ -4,6 +4,7 @@ import { Link, Outlet, useLoaderData, useRouteError } from "@remix-run/react";
 import { boundary } from "@shopify/shopify-app-remix/server";
 import { AppProvider } from "@shopify/shopify-app-remix/react";
 import polarisStyles from "@shopify/polaris/build/esm/styles.css?url";
+import { DiscountProvider } from "../components/providers/DiscountProvider";
 
 import { authenticate } from "../shopify.server";
 
@@ -11,8 +12,12 @@ export const links = () => [{ rel: "stylesheet", href: polarisStyles }];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   await authenticate.admin(request);
+  const url = new URL(request.url);
 
-  return json({ apiKey: process.env.SHOPIFY_API_KEY || "" });
+  return json({
+    apiKey: process.env.SHOPIFY_API_KEY || "",
+    host: url.searchParams.get("host"),
+  });
 };
 
 export default function App() {
@@ -20,13 +25,15 @@ export default function App() {
 
   return (
     <AppProvider isEmbeddedApp apiKey={apiKey}>
-      <ui-nav-menu>
-        <Link to="/app" rel="home">
-          Home
-        </Link>
-        <Link to="/app/additional">Additional page</Link>
-      </ui-nav-menu>
-      <Outlet />
+      <DiscountProvider>
+        <ui-nav-menu>
+          <Link to="/app" rel="home">
+            Home
+          </Link>
+          <Link to="/app/additional">Additional page</Link>
+        </ui-nav-menu>
+        <Outlet />
+      </DiscountProvider>
     </AppProvider>
   );
 }

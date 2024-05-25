@@ -19,6 +19,12 @@ export default function App() {
         />
         <Meta />
         <Links />
+
+        <meta
+          name="shopify-api-key"
+          content="7431687ef99661f19e161a30ac9527fa"
+        />
+        <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script>
       </head>
       <body>
         <Outlet />

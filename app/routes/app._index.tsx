@@ -55,48 +55,79 @@ export default function Index() {
       <BlockStack gap="500">
         <Layout>
           <Layout.Section>
-            <Card>
-              <BlockStack gap="500">
-                <Text as="h2" variant="headingMd">
-                  Shopify Delivery Customization 🚚
-                </Text>
-                <BlockStack gap="200">
-                  <Text as="h3" variant="headingMd">
-                    Delivery Option Hide 🫣
+            <BlockStack gap="500">
+              <Card>
+                <BlockStack gap="500">
+                  <Text as="h2" variant="headingMd">
+                    Delivery Customizations 🚚
                   </Text>
-                  <List>
-                    <List.Item>
-                      This function hides a <i>delivery option</i>
-                    </List.Item>
-                    <List.Item>
-                      Set the custom property (cart attribute or line item
-                      property) and value to match against
-                    </List.Item>
-                    <List.Item>
-                      Set the Ship Option Title / Name to match against
-                    </List.Item>
-                  </List>
+                  <BlockStack gap="200">
+                    <Text as="h3" variant="headingMd">
+                      Delivery Option Hide 🫣
+                    </Text>
+                    <List>
+                      <List.Item>
+                        This function hides a <i>delivery option</i>
+                      </List.Item>
+                      <List.Item>
+                        Set the custom property (cart attribute or line item
+                        property) and value to match against
+                      </List.Item>
+                      <List.Item>
+                        Set the Ship Option Title / Name to match against
+                      </List.Item>
+                    </List>
+                  </BlockStack>
+                  <BlockStack gap="200">
+                    <Text as="h3" variant="headingMd">
+                      Delivery Option Rename 🤫
+                    </Text>
+                    <List>
+                      <List.Item>
+                        This function renames a <i>delivery option</i> by
+                        appending a <i>message</i> to the end of the title
+                      </List.Item>
+                      <List.Item>
+                        Set the custom property (cart attribute or line item
+                        property) and value to match against
+                      </List.Item>
+                      <List.Item>
+                        Set the Ship Option Title / Name to match against
+                      </List.Item>
+                    </List>
+                  </BlockStack>
                 </BlockStack>
-                <BlockStack gap="200">
-                  <Text as="h3" variant="headingMd">
-                    Delivery Option Rename 🤫
+              </Card>
+              <Card>
+                <BlockStack gap="500">
+                  <Text as="h2" variant="headingMd">
+                    Product Discounts 📦
                   </Text>
-                  <List>
-                    <List.Item>
-                      This function renames a <i>delivery option</i> by
-                      appending a <i>message</i> to the end of the title
-                    </List.Item>
-                    <List.Item>
-                      Set the custom property (cart attribute or line item
-                      property) and value to match against
-                    </List.Item>
-                    <List.Item>
-                      Set the Ship Option Title / Name to match against
-                    </List.Item>
-                  </List>
+                  <BlockStack gap="200">
+                    <Text as="h3" variant="headingMd">
+                      Percent Off Discount 😎
+                    </Text>
+                    <List>
+                      <List.Item>
+                        This function creates a <i>product variant discount</i>{" "}
+                        the discount is limited to <i>a percentage</i> of the
+                        original price
+                      </List.Item>
+                      <List.Item>
+                        Product variants can be excluded by <i>sku</i> and or{" "}
+                        <i>vendor</i>
+                      </List.Item>
+                      <List.Item>
+                        To exclude a product variant from all discounts created
+                        by this app, simply set the{" "}
+                        <i>Suavecito Function - Exclude from all discounts</i>{" "}
+                        metafield to <i>true</i>
+                      </List.Item>
+                    </List>
+                  </BlockStack>
                 </BlockStack>
-              </BlockStack>
-            </Card>
+              </Card>
+            </BlockStack>
           </Layout.Section>
           <Layout.Section variant="oneThird">
             <BlockStack gap="500">
