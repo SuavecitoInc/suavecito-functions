@@ -226,8 +226,8 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 
     const response = await admin.graphql(
       `#graphql
-          mutation CreateCodeDiscount($discount: DiscountCodeAppInput!) {
-            discountCreate: discountCodeAppCreate(codeAppDiscount: $discount) {
+          mutation UpdateCodeDiscount($discount: DiscountCodeAppInput!, $id: ID!) {
+            discountUpdate: discountCodeAppUpdate(codeAppDiscount: $discount, id: $id) {
               userErrors {
                 code
                 message
@@ -237,13 +237,12 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
           }`,
       {
         variables: {
+          id: `gid://shopify/DiscountCodeNode/${id}`,
           discount: {
             ...baseCodeDiscount,
             metafields: [
               {
-                namespace: "$app:product-discount",
-                key: "function-configuration",
-                type: "json",
+                id: metafield.id,
                 value: JSON.stringify({
                   quantity: configuration.quantity,
                   percentage: configuration.percentage,
@@ -258,7 +257,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     );
 
     const responseJson = await response.json();
-    const errors = responseJson.data.discountCreate?.userErrors;
+    const errors = responseJson.data.discountUpdate?.userErrors;
     return json({ errors });
   } else {
     const response = await admin.graphql(
