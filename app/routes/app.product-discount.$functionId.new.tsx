@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useForm, useField } from "@shopify/react-form";
@@ -8,6 +8,7 @@ import { CurrencyCode } from "@shopify/react-i18n";
 import {
   Form,
   useActionData,
+  useLoaderData,
   useNavigation,
   useSubmit,
 } from "@remix-run/react";
@@ -35,8 +36,33 @@ import {
 } from "@shopify/polaris";
 
 import shopify from "../shopify.server";
+import CollectionSelect from "~/components/CollectionSelect";
 
-// const { onBreadcrumbAction } = pkg;
+export const loader = async ({ params, request }: ActionFunctionArgs) => {
+  const { functionId } = params;
+  const { admin } = await shopify.authenticate.admin(request);
+
+  const response = await admin.graphql(
+    `#graphql
+      query GetCollections {
+        collections(first: 250) {
+          edges {
+            node {
+              id
+              title
+            }
+          }
+        }
+      }`,
+    { variables: { functionId } },
+  );
+
+  const responseJson = await response.json();
+
+  console.log("RESPONSE JSON", responseJson);
+
+  return json({ collections: responseJson.data.collections });
+};
 
 // This is a server-side action that is invoked when the form is submitted.
 // It makes an admin GraphQL request to create a discount.
@@ -100,6 +126,14 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   excludedVendors: configuration.excludedVendors,
                 }),
               },
+              {
+                namespace: "$app:product-discount",
+                key: "selected-collections",
+                type: "json",
+                value: JSON.stringify({
+                  selectedCollectionIds: configuration.collections,
+                }),
+              },
             ],
           },
         },
@@ -137,6 +171,14 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   excludedVendors: configuration.excludedVendors,
                 }),
               },
+              {
+                namespace: "$app:product-discount",
+                key: "selected-collections",
+                type: "json",
+                value: JSON.stringify({
+                  selectedCollectionIds: configuration.collections,
+                }),
+              },
             ],
           },
         },
@@ -152,6 +194,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 // This is the React component for the page.
 export default function ProductDiscountNew() {
   const submitForm = useSubmit();
+  const loaderData = useLoaderData<typeof loader>();
   const actionData = useActionData<any>();
   const navigation = useNavigation();
   const todaysDate = useMemo(() => new Date(), []);
@@ -159,6 +202,10 @@ export default function ProductDiscountNew() {
   const isLoading = navigation.state === "submitting";
   const currencyCode = CurrencyCode.Cad;
   const submitErrors = actionData?.errors || [];
+
+  console.log("LOADER DATA", loaderData.collections.edges);
+
+  const [selectedCollections, setSelectedCollections] = useState<string[]>([]);
 
   useEffect(() => {
     if (actionData?.errors.length === 0) {
@@ -226,6 +273,7 @@ export default function ProductDiscountNew() {
           excludedVendors: form.configuration.excludedVendors
             .split(",")
             .map((vendor: string) => vendor.trim()),
+          collections: selectedCollections,
         },
       };
 
@@ -315,6 +363,11 @@ export default function ProductDiscountNew() {
                     label="Excluded Vendors (comma separated)"
                     autoComplete="on"
                     {...configuration.excludedVendors}
+                  />
+                  <CollectionSelect
+                    collections={loaderData.collections.edges}
+                    selectedOptions={selectedCollections}
+                    setSelectedOptions={setSelectedCollections}
                   />
                 </BlockStack>
               </Card>

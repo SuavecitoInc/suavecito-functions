@@ -19,3 +19,6 @@ type = "function"
   create = "/app/product-discount/:functionId/new"
   details = "/app/product-discount/:functionId/:id"
 
+  [extensions.input.variables]
+  namespace = "$app:product-discount"
+  key = "selected-collections"

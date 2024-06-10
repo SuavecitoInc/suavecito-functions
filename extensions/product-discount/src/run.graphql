@@ -1,4 +1,4 @@
-query RunInput {
+query RunInput($selectedCollectionIds: [ID!]) {
   cart {
     lines {
       quantity
@@ -9,6 +9,7 @@ query RunInput {
           sku
           product {
             vendor
+            inAnyCollection(ids: $selectedCollectionIds)
           }
           excludeFromAllDiscounts: metafield(
             namespace: "suavecito_function"
@@ -18,12 +19,24 @@ query RunInput {
           }
         }
       }
+      sellingPlanAllocation {
+        sellingPlan {
+          id
+          name
+        }
+      }
     }
   }
   discountNode {
     metafield(
       namespace: "$app:product-discount"
       key: "function-configuration"
+    ) {
+      value
+    }
+    collections: metafield(
+      namespace: "$app:product-discount"
+      key: "selected-collections"
     ) {
       value
     }

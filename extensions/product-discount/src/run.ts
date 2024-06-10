@@ -34,24 +34,20 @@ export function run(input: RunInput) {
   const configuration = JSON.parse(
     input?.discountNode?.metafield?.value ?? "{}",
   );
-  console.log("Configuration", JSON.stringify(configuration, null, 2));
-  console.log("Input", JSON.stringify(input, null, 2));
 
   if (!configuration.quantity || !configuration.percentage) {
     return EMPTY_DISCOUNT;
   }
 
-  console.log("Configuration", JSON.stringify(configuration, null, 2));
-
   const excludedSkus = configuration.excludedSkus.map((sku: string) =>
     sku.toLowerCase(),
   );
-  console.log("Excluded SKUs", excludedSkus);
+
   const excludedVendors = configuration.excludedVendors.map((vendor: string) =>
     vendor.toLowerCase(),
   );
-  console.log("Excluded Vendors", excludedVendors);
 
+  // to filter out subscriptions, we can use line.sellingPlanAllocation
   const targets = input.cart.lines
     // Use the configured quantity instead of a hardcoded value
     .filter(
