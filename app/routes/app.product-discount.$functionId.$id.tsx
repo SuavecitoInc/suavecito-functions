@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useForm, useField } from "@shopify/react-form";
@@ -34,6 +34,7 @@ import {
 } from "@shopify/polaris";
 
 import shopify from "../shopify.server";
+import CollectionSelect from "~/components/CollectionSelect";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const { id } = params;
@@ -152,6 +153,18 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
               id
               value
             }
+            selectedCollections: metafield(namespace: "$app:product-discount", key: "selected-collections") {
+              id
+              value
+            }
+          }
+          collections(first: 250) {
+            edges {
+              node {
+                id
+                title
+              }
+            }
           }
         }`,
     {
@@ -164,10 +177,16 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const responseJson = await automaticDiscountResponse.json();
   console.log("RESPONSE JSON", JSON.stringify(responseJson, null, 2));
   const discountNode = responseJson.data.discountNode;
+  const collections = responseJson.data.collections;
   const isAutomaticDiscount = discountNode.discount.__typename.includes(
     "DiscountAutomaticApp",
   );
   const metafieldValue = JSON.parse(discountNode.metafield.value);
+
+  const selectedCollections = JSON.parse(
+    discountNode.selectedCollections.value,
+  );
+  console.log("SELECTED OLLECTIONS", selectedCollections);
 
   console.log("isAutomaticDiscount", isAutomaticDiscount);
 
@@ -178,11 +197,13 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
       discountMethod: isAutomaticDiscount
         ? DiscountMethod.Automatic
         : DiscountMethod.Code,
+      collections,
       configuration: {
         quantity: metafieldValue?.quantity,
         percentage: metafieldValue?.percentage,
         excludedSkus: metafieldValue?.excludedSkus,
         excludedVendors: metafieldValue?.excludedVendors,
+        selectedCollections: selectedCollections?.selectedCollectionIds ?? [],
       },
     }),
   };
@@ -313,8 +334,13 @@ export default function ProductDiscount() {
   const {
     discountNode,
     discountMethod: discountNodeMethod,
+    collections,
     configuration: discountConfiguration,
   } = JSON.parse(loaderData.body);
+
+  const [selectedCollections, setSelectedCollections] = useState<string[]>(
+    discountConfiguration?.selectedCollections,
+  );
 
   useEffect(() => {
     if (actionData?.errors.length === 0) {
@@ -396,6 +422,7 @@ export default function ProductDiscount() {
           excludedVendors: form.configuration.excludedVendors
             .split(",")
             .map((vendor: string) => vendor.trim()),
+          collections: selectedCollections,
         },
         metafield: {
           id: discountNode?.metafield?.id,
@@ -488,6 +515,11 @@ export default function ProductDiscount() {
                     label="Excluded Vendors (comma separated)"
                     autoComplete="on"
                     {...configuration.excludedVendors}
+                  />
+                  <CollectionSelect
+                    collections={collections.edges}
+                    selectedOptions={selectedCollections}
+                    setSelectedOptions={setSelectedCollections}
                   />
                 </BlockStack>
               </Card>
