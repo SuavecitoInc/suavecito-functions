@@ -1,0 +1,42 @@
+query RunInput {
+  cart {
+    cost {
+      subtotalAmount {
+        amount
+      }
+      totalAmount {
+        amount
+      }
+      totalDutyAmount {
+        amount
+      }
+      totalTaxAmount {
+        amount
+      }
+    }
+    deliveryGroups {
+      deliveryAddress {
+        provinceCode
+        countryCode
+        market {
+          handle
+        }
+      }
+      deliveryOptions {
+        handle
+        title
+        cost {
+          amount
+        }
+      }
+    }
+  }
+  discountNode {
+    metafield(
+      namespace: "$app:shipping-discount"
+      key: "function-configuration"
+    ) {
+      value
+    }
+  }
+}
