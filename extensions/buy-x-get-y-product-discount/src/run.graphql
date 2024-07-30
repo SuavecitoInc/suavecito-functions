@@ -1,0 +1,56 @@
+query RunInput($selectedCollectionIds: [ID!]) {
+  cart {
+    lines {
+      quantity
+      cost {
+        amountPerQuantity {
+          currencyCode
+          amount
+        }
+      }
+      merchandise {
+        __typename
+        ... on ProductVariant {
+          id
+          sku
+          product {
+            vendor
+            inAnyCollection(ids: $selectedCollectionIds)
+          }
+          excludeFromAllDiscounts: metafield(
+            namespace: "suavecito_function"
+            key: "exclude_from_all_discounts"
+          ) {
+            value
+          }
+          buy2Get1FreeEligible: metafield(
+            namespace: "debut"
+            key: "enable_b2g1f"
+          ) {
+            value
+          }
+        }
+      }
+      sellingPlanAllocation {
+        sellingPlan {
+          id
+          name
+        }
+      }
+    }
+  }
+  discountNode {
+    metafield(
+      namespace: "$app:buy-x-get-y-product-discount"
+      key: "function-configuration"
+    ) {
+      value
+    }
+    collections: metafield(
+      namespace: "$app:buy-x-get-y-product-discount"
+      key: "selected-collections"
+    ) {
+      value
+    }
+  }
+}

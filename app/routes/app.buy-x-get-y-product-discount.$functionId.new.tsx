@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useForm, useField } from "@shopify/react-form";
@@ -8,7 +8,7 @@ import { CurrencyCode } from "@shopify/react-i18n";
 import {
   Form,
   useActionData,
-  useLoaderData,
+  // useLoaderData,
   useNavigation,
   useSubmit,
 } from "@remix-run/react";
@@ -36,38 +36,12 @@ import {
 } from "@shopify/polaris";
 
 import shopify from "../shopify.server";
-import CollectionSelect from "~/components/CollectionSelect";
-
-export const loader = async ({ params, request }: ActionFunctionArgs) => {
-  const { functionId } = params;
-  const { admin } = await shopify.authenticate.admin(request);
-
-  const response = await admin.graphql(
-    `#graphql
-      query GetCollections {
-        collections(first: 250) {
-          edges {
-            node {
-              id
-              title
-            }
-          }
-        }
-      }`,
-    { variables: { functionId } },
-  );
-
-  const responseJson = await response.json();
-
-  console.log("RESPONSE JSON", responseJson);
-
-  return json({ collections: responseJson.data.collections });
-};
 
 // This is a server-side action that is invoked when the form is submitted.
 // It makes an admin GraphQL request to create a discount.
 export const action = async ({ params, request }: ActionFunctionArgs) => {
   const { functionId } = params;
+  console.log("FUNCTION ID", functionId);
   const { admin } = await shopify.authenticate.admin(request);
   const formData = await request.formData();
   const {
@@ -116,22 +90,13 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
             ...baseCodeDiscount,
             metafields: [
               {
-                namespace: "$app:product-discount",
+                namespace: "$app:buy-x-get-y-product-discount",
                 key: "function-configuration",
                 type: "json",
                 value: JSON.stringify({
-                  quantity: configuration.quantity,
+                  buyX: configuration.buyX,
+                  getY: configuration.getY,
                   percentage: configuration.percentage,
-                  excludedSkus: configuration.excludedSkus,
-                  excludedVendors: configuration.excludedVendors,
-                }),
-              },
-              {
-                namespace: "$app:product-discount",
-                key: "selected-collections",
-                type: "json",
-                value: JSON.stringify({
-                  selectedCollectionIds: configuration.collections,
                 }),
               },
             ],
@@ -161,22 +126,13 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
             ...baseDiscount,
             metafields: [
               {
-                namespace: "$app:product-discount",
+                namespace: "$app:buy-x-get-y-product-discount",
                 key: "function-configuration",
                 type: "json",
                 value: JSON.stringify({
-                  quantity: configuration.quantity,
+                  buyX: configuration.buyX,
+                  getY: configuration.getY,
                   percentage: configuration.percentage,
-                  excludedSkus: configuration.excludedSkus,
-                  excludedVendors: configuration.excludedVendors,
-                }),
-              },
-              {
-                namespace: "$app:product-discount",
-                key: "selected-collections",
-                type: "json",
-                value: JSON.stringify({
-                  selectedCollectionIds: configuration.collections,
                 }),
               },
             ],
@@ -192,9 +148,9 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 };
 
 // This is the React component for the page.
-export default function ProductDiscountNew() {
+export default function BuyXGetYProductDiscountNew() {
   const submitForm = useSubmit();
-  const loaderData = useLoaderData<typeof loader>();
+  // const loaderData = useLoaderData<typeof loader>();
   const actionData = useActionData<any>();
   const navigation = useNavigation();
   const todaysDate = useMemo(() => new Date(), []);
@@ -203,9 +159,7 @@ export default function ProductDiscountNew() {
   const currencyCode = CurrencyCode.Usd;
   const submitErrors = actionData?.errors || [];
 
-  console.log("LOADER DATA", loaderData.collections.edges);
-
-  const [selectedCollections, setSelectedCollections] = useState<string[]>([]);
+  // console.log("LOADER DATA", loaderData.collections.edges);
 
   useEffect(() => {
     if (actionData?.errors.length === 0) {
@@ -247,11 +201,10 @@ export default function ProductDiscountNew() {
       startDate: useField(todaysDate),
       endDate: useField(null),
       configuration: {
+        buyX: useField("2"),
+        getY: useField("1"),
         // Add quantity and percentage configuration to form data
-        quantity: useField("1"),
         percentage: useField("0"),
-        excludedSkus: useField(""),
-        excludedVendors: useField(""),
       },
     },
     onSubmit: async (form) => {
@@ -265,15 +218,9 @@ export default function ProductDiscountNew() {
         startsAt: form.startDate,
         endsAt: form.endDate,
         configuration: {
-          quantity: parseInt(form.configuration.quantity),
+          buyX: parseInt(form.configuration.buyX),
+          getY: parseInt(form.configuration.getY),
           percentage: parseFloat(form.configuration.percentage),
-          excludedSkus: form.configuration.excludedSkus
-            .split(",")
-            .map((sku: string) => sku.trim()),
-          excludedVendors: form.configuration.excludedVendors
-            .split(",")
-            .map((vendor: string) => vendor.trim()),
-          collections: selectedCollections,
         },
       };
 
@@ -312,7 +259,7 @@ export default function ProductDiscountNew() {
   return (
     // Render a discount form using Polaris components and the discount app components
     <Page
-      title="Create product discount"
+      title="Create buy x get y product discount"
       backAction={{
         content: "Discounts",
         onAction: () => open("shopify://admin/discounts", "_top"),
@@ -344,30 +291,20 @@ export default function ProductDiscountNew() {
                     Configuration
                   </Text>
                   <TextField
-                    label="Minimum quantity"
+                    label="Customer Buys (Buy X)"
                     autoComplete="on"
-                    {...configuration.quantity}
+                    {...configuration.buyX}
+                  />
+                  <TextField
+                    label="Customer Gets (Get Y)"
+                    autoComplete="on"
+                    {...configuration.getY}
                   />
                   <TextField
                     label="Discount percentage"
                     autoComplete="on"
                     {...configuration.percentage}
                     suffix="%"
-                  />
-                  <TextField
-                    label="Excluded SKUs (comma separated)"
-                    autoComplete="on"
-                    {...configuration.excludedSkus}
-                  />
-                  <TextField
-                    label="Excluded Vendors (comma separated)"
-                    autoComplete="on"
-                    {...configuration.excludedVendors}
-                  />
-                  <CollectionSelect
-                    collections={loaderData.collections.edges}
-                    selectedOptions={selectedCollections}
-                    setSelectedOptions={setSelectedCollections}
                   />
                 </BlockStack>
               </Card>

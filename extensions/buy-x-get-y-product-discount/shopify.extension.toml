@@ -1,0 +1,24 @@
+api_version = "2024-01"
+
+[[extensions]]
+handle = "buy-x-get-y-product-discount"
+name = "t:name"
+description = "t:description"
+type = "function"
+
+  [[extensions.targeting]]
+  target = "purchase.product-discount.run"
+  input_query = "src/run.graphql"
+  export = "run"
+
+  [extensions.build]
+  command = ""
+  path = "dist/function.wasm"
+
+  [extensions.ui.paths]
+  create = "/app/buy-x-get-y-product-discount/:functionId/new"
+  details = "/app/buy-x-get-y-product-discount/:functionId/:id"
+
+  [extensions.input.variables]
+  namespace = "$app:buy-x-get-y-product-discount"
+  key = "selected-collections"
