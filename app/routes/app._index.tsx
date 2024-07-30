@@ -296,6 +296,18 @@ export default function Index() {
                         GraphQL API
                       </Link>
                     </InlineStack>
+                    <InlineStack align="space-between">
+                      <Text as="span" variant="bodyMd">
+                        Version
+                      </Text>
+                      <Link
+                        url="https://github.com/SuavecitoInc/suavecito-functions"
+                        target="_blank"
+                        removeUnderline
+                      >
+                        v.0.0.3
+                      </Link>
+                    </InlineStack>
                   </BlockStack>
                 </BlockStack>
               </Card>
