@@ -98,6 +98,7 @@ export default function Index() {
                   </BlockStack>
                 </BlockStack>
               </Card>
+
               <Card>
                 <BlockStack gap="500">
                   <Text as="h2" variant="headingMd">
@@ -125,10 +126,69 @@ export default function Index() {
                       </List.Item>
                     </List>
                   </BlockStack>
+                  <BlockStack gap="200">
+                    <Text as="h3" variant="headingMd">
+                      Buy X Get Y - Percent Off Discount 😉
+                    </Text>
+                    <List>
+                      <List.Item>
+                        This function creates a simple (really basic) Buy X Get
+                        Y product discount
+                      </List.Item>
+                      <List.Item>
+                        The function takes 3 arguments: Buy X (number of
+                        products), Get Y (number of products), and Percentage
+                        (discount percentage)
+                      </List.Item>
+                      <List.Item>
+                        The function will handle the rest of the logic.
+                        Including the discount split. Eligible products depend
+                        on a variant metafield:{" "}
+                        <strong>variant.metafields.debut.enable_b2g1f</strong>{" "}
+                        <i>** metafield namespace and key could change</i>
+                      </List.Item>
+                    </List>
+                  </BlockStack>
+                </BlockStack>
+              </Card>
+
+              <Card>
+                <BlockStack gap="500">
+                  <Text as="h2" variant="headingMd">
+                    Shipping Discounts 📦
+                  </Text>
+                  <BlockStack gap="200">
+                    <Text as="h3" variant="headingMd">
+                      Percent Off Discount 😎
+                    </Text>
+                    <List>
+                      <List.Item>
+                        This function creates a shipping discount, the discount
+                        is limited to a percentage of the original shipping
+                        price
+                      </List.Item>
+                      <List.Item>
+                        The function takes 3 arguments: discount percentage,
+                        shipping country code and minimum purchase amount
+                      </List.Item>
+                      <List.Item>
+                        If the requirements are met (shipping country & min
+                        purchase amount), the function will select the cheapest
+                        priced shipping option from the currently available
+                        options, and it will discount it by the selected
+                        discount percentage
+                      </List.Item>
+                      <List.Item>
+                        <strong>Example use case: </strong>
+                        <i>Free US Shipping Over $50.</i>
+                      </List.Item>
+                    </List>
+                  </BlockStack>
                 </BlockStack>
               </Card>
             </BlockStack>
           </Layout.Section>
+
           <Layout.Section variant="oneThird">
             <BlockStack gap="500">
               <Card>
@@ -236,6 +296,33 @@ export default function Index() {
                         GraphQL API
                       </Link>
                     </InlineStack>
+                    <InlineStack align="space-between">
+                      <Text as="span" variant="bodyMd">
+                        Version
+                      </Text>
+                      <Link
+                        url="https://github.com/SuavecitoInc/suavecito-functions"
+                        target="_blank"
+                        removeUnderline
+                      >
+                        v.0.0.3
+                      </Link>
+                    </InlineStack>
+                  </BlockStack>
+                </BlockStack>
+              </Card>
+              <Card>
+                <BlockStack gap="200">
+                  <Text as="h2" variant="headingMd">
+                    Checkout Banner
+                  </Text>
+                  <BlockStack gap="200">
+                    <List>
+                      <List.Item>
+                        2 banner targets available, one above the line items and
+                        one in the shipping section.
+                      </List.Item>
+                    </List>
                   </BlockStack>
                 </BlockStack>
               </Card>

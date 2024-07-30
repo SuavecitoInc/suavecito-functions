@@ -33,7 +33,7 @@
 - Shipping Discount (Percent Off)
   - This function creates a shipping discount, the discount is limited to a percentage of the original shipping price
   - The function takes 3 arguments: discount percentage, shipping country code and minimum purchase amount
-  - If the requirements are met (shipping country & min purhcase amount), the function will select the cheapest priced shipping option from the currently available options, and it will discount it by the selected discount percentage
+  - If the requirements are met (shipping country & min purchase amount), the function will select the cheapest priced shipping option from the currently available options, and it will discount it by the selected discount percentage
   - Example use case: Free US Shipping Over $50.
 
 ## v.0.0.1
