@@ -39,16 +39,12 @@ export function run(input: RunInput): FunctionRunResult {
 
   console.log("CURRENT COUNTRY CODE", countryCode);
 
-  const subtotal = parseFloat(input.cart.cost.subtotalAmount.amount);
-  console.log("SUBTOTAL", subtotal);
+  // const subtotal = parseFloat(input.cart.cost.subtotalAmount.amount);
+  let total = parseFloat(input.cart.cost.totalAmount.amount);
+  console.log("TOTAL", total);
 
   // not the right country
   if (countryCode !== shipCountryCode) {
-    return EMPTY_DISCOUNT;
-  }
-  // not enough purchase
-  if (subtotal < minPurchaseAmount) {
-    console.log("SUBTOTAL LESS THAN MIN PURCHASE", minPurchaseAmount);
     return EMPTY_DISCOUNT;
   }
 
@@ -65,7 +61,23 @@ export function run(input: RunInput): FunctionRunResult {
     JSON.stringify(lowestCostDeliveryOption, null, 2),
   );
 
+  const lowestCostDeliveryOptionCost = lowestCostDeliveryOption
+    ? parseFloat(lowestCostDeliveryOption.cost.amount)
+    : 0;
+
+  console.log("LOWEST COST DELIVERY OPTION COST", lowestCostDeliveryOptionCost);
+
+  total -= lowestCostDeliveryOptionCost;
+
+  console.log("TOTAL MINUS CHEAPEST DELIVERY OPTION", total);
+
   if (!lowestCostDeliveryOption) {
+    return EMPTY_DISCOUNT;
+  }
+
+  // not enough purchase
+  if (total < minPurchaseAmount) {
+    console.log("SUBTOTAL LESS THAN MIN PURCHASE", minPurchaseAmount);
     return EMPTY_DISCOUNT;
   }
 

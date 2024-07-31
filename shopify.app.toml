@@ -3,7 +3,7 @@
 client_id = "7431687ef99661f19e161a30ac9527fa"
 name = "Suavecito Functions"
 handle = "suavecito-functions"
-application_url = "https://miss-tend-features-warnings.trycloudflare.com"
+application_url = "https://programme-linux-pan-news.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_content,write_delivery_customizations,write_discounts,write_prod
 
 [auth]
 redirect_urls = [
-  "https://miss-tend-features-warnings.trycloudflare.com/auth/callback",
-  "https://miss-tend-features-warnings.trycloudflare.com/auth/shopify/callback",
-  "https://miss-tend-features-warnings.trycloudflare.com/api/auth/callback"
+  "https://programme-linux-pan-news.trycloudflare.com/auth/callback",
+  "https://programme-linux-pan-news.trycloudflare.com/auth/shopify/callback",
+  "https://programme-linux-pan-news.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]
