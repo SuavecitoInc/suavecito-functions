@@ -48,13 +48,31 @@ export function run(input: RunInput): FunctionRunResult {
     return EMPTY_DISCOUNT;
   }
 
-  const lowestCostDeliveryOption = input.cart.deliveryGroups
+  let lowestCostDeliveryOption = input.cart.deliveryGroups
     .flatMap((group) => group.deliveryOptions)
     .reduce((prev, current) =>
       parseFloat(prev.cost.amount) < parseFloat(current.cost.amount)
         ? prev
         : current,
     );
+
+  console.log("CHECKING LOWEST COST DELIVERY OPTION");
+
+  if (parseFloat(lowestCostDeliveryOption.cost.amount) === 0) {
+    console.log("CHEAPEST DELIVERY OPTION IS FREE");
+    console.log("FINDING NEXT CHEAPEST DELIVERY OPTION");
+    // find the next lowest cost delivery option
+    const filteredDeliveryOptions = input.cart.deliveryGroups
+      .flatMap((group) => group.deliveryOptions)
+      .filter((option) => parseFloat(option.cost.amount) !== 0);
+
+    lowestCostDeliveryOption = filteredDeliveryOptions.reduce(
+      (prev, current) =>
+        parseFloat(prev.cost.amount) < parseFloat(current.cost.amount)
+          ? prev
+          : current,
+    );
+  }
 
   console.log(
     "LOWEST COST DELIVERY OPTION",
