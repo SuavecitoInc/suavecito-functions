@@ -30,6 +30,12 @@ query RunInput {
           currencyCode
         }
       }
+      sellingPlanAllocation {
+        sellingPlan {
+          id
+          name
+        }
+      }
     }
     deliveryGroups {
       deliveryAddress {
