@@ -48,6 +48,14 @@ export function run(input: RunInput): FunctionRunResult {
     return EMPTY_DISCOUNT;
   }
 
+  // check if there are subscription items in the cart
+  const hasSubscriptionItems = input.cart.lines.some(
+    (line) =>
+      line?.sellingPlanAllocation !== null &&
+      line?.sellingPlanAllocation !== undefined,
+  );
+  console.log("CHECKING IF CART HAS SUBSCRIPTION ITEMS", hasSubscriptionItems);
+
   let lowestCostDeliveryOption = input.cart.deliveryGroups
     .flatMap((group) => group.deliveryOptions)
     .reduce((prev, current) =>
