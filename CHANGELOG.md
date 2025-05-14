@@ -17,6 +17,14 @@
     - Ex: Buy 2 Get 1 Free. Input = 5 eligible products, Discount Split = 4 Paid, 1 Free.
     - Ex: Buy 2 Get 1 Free. Input = 6 eligible products, Discount Split = 4 Paid, 2 Free.
 
+**Limitations**
+
+- Discount allocations are not available in the Shipping Discount function input: [Cart object](https://shopify.dev/docs/api/functions/reference/shipping-discounts/graphql/common-objects/cart)
+- Workaround:
+  - use total instead of subtotal.
+  - total includes discounts, but also includes shipping cost. As it has yet to be discounted, \*\* if applicable.
+  - the total is calculated as `(total - lowest cost delivery option)`, this is then used to check if `total > minimum` amount
+
 ## Released
 
 ## v.0.0.2

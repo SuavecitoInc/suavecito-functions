@@ -39,20 +39,16 @@ export function run(input: RunInput): FunctionRunResult {
 
   console.log("CURRENT COUNTRY CODE", countryCode);
 
-  const subtotal = parseFloat(input.cart.cost.subtotalAmount.amount);
-  console.log("SUBTOTAL", subtotal);
+  // const subtotal = parseFloat(input.cart.cost.subtotalAmount.amount);
+  let total = parseFloat(input.cart.cost.totalAmount.amount);
+  console.log("TOTAL", total);
 
   // not the right country
   if (countryCode !== shipCountryCode) {
     return EMPTY_DISCOUNT;
   }
-  // not enough purchase
-  if (subtotal < minPurchaseAmount) {
-    console.log("SUBTOTAL LESS THAN MIN PURCHASE", minPurchaseAmount);
-    return EMPTY_DISCOUNT;
-  }
 
-  const lowestCostDeliveryOption = input.cart.deliveryGroups
+  let lowestCostDeliveryOption = input.cart.deliveryGroups
     .flatMap((group) => group.deliveryOptions)
     .reduce((prev, current) =>
       parseFloat(prev.cost.amount) < parseFloat(current.cost.amount)
@@ -60,12 +56,46 @@ export function run(input: RunInput): FunctionRunResult {
         : current,
     );
 
+  console.log("CHECKING LOWEST COST DELIVERY OPTION");
+
+  if (parseFloat(lowestCostDeliveryOption.cost.amount) === 0) {
+    console.log("CHEAPEST DELIVERY OPTION IS FREE");
+    console.log("FINDING NEXT CHEAPEST DELIVERY OPTION");
+    // find the next lowest cost delivery option
+    const filteredDeliveryOptions = input.cart.deliveryGroups
+      .flatMap((group) => group.deliveryOptions)
+      .filter((option) => parseFloat(option.cost.amount) !== 0);
+
+    lowestCostDeliveryOption = filteredDeliveryOptions.reduce(
+      (prev, current) =>
+        parseFloat(prev.cost.amount) < parseFloat(current.cost.amount)
+          ? prev
+          : current,
+    );
+  }
+
   console.log(
     "LOWEST COST DELIVERY OPTION",
     JSON.stringify(lowestCostDeliveryOption, null, 2),
   );
 
+  const lowestCostDeliveryOptionCost = lowestCostDeliveryOption
+    ? parseFloat(lowestCostDeliveryOption.cost.amount)
+    : 0;
+
+  console.log("LOWEST COST DELIVERY OPTION COST", lowestCostDeliveryOptionCost);
+
+  total -= lowestCostDeliveryOptionCost;
+
+  console.log("TOTAL MINUS CHEAPEST DELIVERY OPTION", total);
+
   if (!lowestCostDeliveryOption) {
+    return EMPTY_DISCOUNT;
+  }
+
+  // not enough purchase
+  if (total < minPurchaseAmount) {
+    console.log("SUBTOTAL LESS THAN MIN PURCHASE", minPurchaseAmount);
     return EMPTY_DISCOUNT;
   }
 

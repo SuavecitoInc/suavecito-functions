@@ -14,6 +14,23 @@ query RunInput {
         amount
       }
     }
+    lines {
+      quantity
+      cost {
+        amountPerQuantity {
+          amount
+          currencyCode
+        }
+        totalAmount {
+          amount
+          currencyCode
+        }
+        subtotalAmount {
+          amount
+          currencyCode
+        }
+      }
+    }
     deliveryGroups {
       deliveryAddress {
         provinceCode
