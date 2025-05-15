@@ -50,6 +50,12 @@ export function run(input: RunInput) {
   // to filter out subscriptions, we can use line.sellingPlanAllocation
   const targets = input.cart.lines
     // Use the configured quantity instead of a hardcoded value
+    // Exclude lines that are in any collection
+    .filter(
+      (line) =>
+        line.merchandise.__typename == "ProductVariant" &&
+        !line.merchandise.product.inAnyCollection,
+    )
     .filter(
       (line) =>
         line.quantity >= configuration.quantity &&
