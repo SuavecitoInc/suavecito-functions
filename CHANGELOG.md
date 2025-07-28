@@ -6,7 +6,15 @@
 
 ## Unreleased
 
-## v0.0.3
+## v0.0.4 - 2025-07-28
+
+- I have updated the Shopify Admin API to 2025-07.
+- The node image being used for the app was also updated from node 18 to node 22.
+- All packages were also updated.
+
+**Breaking Changes**
+
+## v0.0.3 - 2024-07-30
 
 **Features**
 

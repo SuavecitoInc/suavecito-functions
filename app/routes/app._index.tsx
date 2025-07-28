@@ -305,7 +305,7 @@ export default function Index() {
                         target="_blank"
                         removeUnderline
                       >
-                        v.0.0.3
+                        v.0.0.4
                       </Link>
                     </InlineStack>
                   </BlockStack>
