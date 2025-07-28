@@ -15,10 +15,7 @@ export default function CollectionSelect({
 }: Props) {
   const deselectedOptions = useMemo(
     () =>
-      collections.map(({ node }) => ({
-        label: node.title,
-        value: node.id,
-      })),
+      collections.map(({ node }) => ({ label: node.title, value: node.id })),
     [collections],
   );
 
