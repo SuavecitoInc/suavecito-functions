@@ -6,13 +6,32 @@
 
 ## Unreleased
 
+## v0.0.4 - 2025-07-30
+
+**Breaking Changes**
+
+- The Buy X Get Y Product Discount settings have been extended with new settings.
+  - In collection: this setting filters out products that are not in the selected collection.
+  - Include excluded variants in total: this setting allows excluded variants to be included in the total.
+- The UI has been updated to reflect the new settings.
+- The Product Discount settings have been extended with new settings.
+  - Include or exclude selected collections: this setting allows you to include or exclude products in the selected collections.
+
+**Fixes**
+
+- The Product Discount Update had a bug that caused the selected collections to not be saved correctly. This has been fixed.
+
+**To Do**
+
+- Todo: Implement an exclude / exclude products in selected collections.
+
 ## v0.0.4 - 2025-07-28
+
+**Breaking Changes**
 
 - I have updated the Shopify Admin API to 2025-07.
 - The node image being used for the app was also updated from node 18 to node 22.
 - All packages were also updated.
-
-**Breaking Changes**
 
 ## v0.0.3 - 2024-07-30
 
