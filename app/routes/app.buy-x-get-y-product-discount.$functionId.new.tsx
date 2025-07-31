@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useForm, useField } from "@shopify/react-form";
@@ -8,7 +8,7 @@ import { CurrencyCode } from "@shopify/react-i18n";
 import {
   Form,
   useActionData,
-  // useLoaderData,
+  useLoaderData,
   useNavigation,
   useSubmit,
 } from "@remix-run/react";
@@ -32,10 +32,43 @@ import {
   Page,
   PageActions,
   TextField,
+  Checkbox,
   BlockStack,
 } from "@shopify/polaris";
 
 import shopify from "../shopify.server";
+import CollectionSelect from "~/components/CollectionSelect";
+
+export const loader = async ({ params, request }: ActionFunctionArgs) => {
+  // const { functionId } = params;
+
+  const { admin } = await shopify.authenticate.admin(request);
+
+  const response = await admin.graphql(
+    `#graphql
+      query GetCollections {
+        collections(first: 250) {
+          edges {
+            node {
+              id
+              title
+            }
+          }
+        }
+      }`,
+  );
+
+  const responseJson = await response.json();
+
+  console.log("RESPONSE JSON", responseJson);
+
+  if (!responseJson.data) {
+    console.error("Error fetching collections:");
+    return json({ collections: { edges: [] } });
+  }
+
+  return json({ collections: responseJson.data.collections });
+};
 
 // This is a server-side action that is invoked when the form is submitted.
 // It makes an admin GraphQL request to create a discount.
@@ -97,6 +130,16 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   buyX: configuration.buyX,
                   getY: configuration.getY,
                   percentage: configuration.percentage,
+                  includeExcludedVariantsInTotal:
+                    configuration.includeExcludedVariantsInTotal,
+                }),
+              },
+              {
+                namespace: "$app:buy-x-get-y-product-discount",
+                key: "selected-collections",
+                type: "json",
+                value: JSON.stringify({
+                  selectedCollectionIds: configuration.collections,
                 }),
               },
             ],
@@ -106,6 +149,10 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     );
 
     const responseJson = await response.json();
+    if (!responseJson.data) {
+      console.error("Error creating code discount");
+      return json({ errors: "Something went wrong" });
+    }
     const errors = responseJson.data.discountCreate?.userErrors;
     return json({ errors });
   } else {
@@ -133,6 +180,16 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   buyX: configuration.buyX,
                   getY: configuration.getY,
                   percentage: configuration.percentage,
+                  includeExcludedVariantsInTotal:
+                    configuration.includeExcludedVariantsInTotal,
+                }),
+              },
+              {
+                namespace: "$app:buy-x-get-y-product-discount",
+                key: "selected-collections",
+                type: "json",
+                value: JSON.stringify({
+                  selectedCollectionIds: configuration.collections,
                 }),
               },
             ],
@@ -142,6 +199,10 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     );
 
     const responseJson = await response.json();
+    if (!responseJson.data) {
+      console.error("Error creating automatic discount");
+      return json({ errors: "Something went wrong" });
+    }
     const errors = responseJson.data.discountCreate?.userErrors;
     return json({ errors });
   }
@@ -150,7 +211,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 // This is the React component for the page.
 export default function BuyXGetYProductDiscountNew() {
   const submitForm = useSubmit();
-  // const loaderData = useLoaderData<typeof loader>();
+  const loaderData = useLoaderData<typeof loader>();
   const actionData = useActionData<any>();
   const navigation = useNavigation();
   const todaysDate = useMemo(() => new Date(), []);
@@ -159,7 +220,15 @@ export default function BuyXGetYProductDiscountNew() {
   const currencyCode = CurrencyCode.Usd;
   const submitErrors = actionData?.errors || [];
 
-  // console.log("LOADER DATA", loaderData.collections.edges);
+  console.log("LOADER DATA", loaderData.collections.edges);
+
+  const [selectedCollections, setSelectedCollections] = useState<string[]>([]);
+
+  const [checked, setChecked] = useState(false);
+  const handleCheckboxChange = useCallback(
+    (newChecked: boolean) => setChecked(newChecked),
+    [],
+  );
 
   useEffect(() => {
     if (actionData?.errors.length === 0) {
@@ -221,6 +290,8 @@ export default function BuyXGetYProductDiscountNew() {
           buyX: parseInt(form.configuration.buyX),
           getY: parseInt(form.configuration.getY),
           percentage: parseFloat(form.configuration.percentage),
+          includeExcludedVariantsInTotal: checked,
+          collections: selectedCollections,
         },
       };
 
@@ -305,6 +376,17 @@ export default function BuyXGetYProductDiscountNew() {
                     autoComplete="on"
                     {...configuration.percentage}
                     suffix="%"
+                  />
+                  <Checkbox
+                    label="Include excluded variants in customer buys total"
+                    checked={checked}
+                    onChange={handleCheckboxChange}
+                  />
+                  <label>Select collections to include in discount</label>
+                  <CollectionSelect
+                    collections={loaderData.collections.edges}
+                    selectedOptions={selectedCollections}
+                    setSelectedOptions={setSelectedCollections}
                   />
                 </BlockStack>
               </Card>
