@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useForm, useField } from "@shopify/react-form";
@@ -33,13 +33,14 @@ import {
   PageActions,
   TextField,
   BlockStack,
+  Select,
 } from "@shopify/polaris";
 
 import shopify from "../shopify.server";
 import CollectionSelect from "~/components/CollectionSelect";
 
 export const loader = async ({ params, request }: ActionFunctionArgs) => {
-  const { functionId } = params;
+  // const { functionId } = params;
   const { admin } = await shopify.authenticate.admin(request);
 
   const response = await admin.graphql(
@@ -54,12 +55,16 @@ export const loader = async ({ params, request }: ActionFunctionArgs) => {
           }
         }
       }`,
-    { variables: { functionId } },
   );
 
   const responseJson = await response.json();
 
   console.log("RESPONSE JSON", responseJson);
+  if (!responseJson.data) {
+    console.error("Error fetching collections");
+    // Return an empty collections array to avoid breaking the UI
+    return json({ collections: { edges: [] } });
+  }
 
   return json({ collections: responseJson.data.collections });
 };
@@ -124,6 +129,8 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   percentage: configuration.percentage,
                   excludedSkus: configuration.excludedSkus,
                   excludedVendors: configuration.excludedVendors,
+                  includeProductsInCollections:
+                    configuration.includeProductsInCollections,
                 }),
               },
               {
@@ -141,6 +148,10 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     );
 
     const responseJson = await response.json();
+    if (!responseJson.data) {
+      console.error("Error creating code discount");
+      return json({ errors: "Something went wrong" });
+    }
     const errors = responseJson.data.discountCreate?.userErrors;
     return json({ errors });
   } else {
@@ -169,6 +180,8 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   percentage: configuration.percentage,
                   excludedSkus: configuration.excludedSkus,
                   excludedVendors: configuration.excludedVendors,
+                  includeProductsInCollections:
+                    configuration.includeProductsInCollections,
                 }),
               },
               {
@@ -186,6 +199,10 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     );
 
     const responseJson = await response.json();
+    if (!responseJson.data) {
+      console.error("Error creating automatic discount");
+      return json({ errors: "Something went wrong" });
+    }
     const errors = responseJson.data.discountCreate?.userErrors;
     return json({ errors });
   }
@@ -206,6 +223,19 @@ export default function ProductDiscountNew() {
   console.log("LOADER DATA", loaderData.collections.edges);
 
   const [selectedCollections, setSelectedCollections] = useState<string[]>([]);
+
+  // select options
+  const [selected, setSelected] = useState("exclude");
+
+  const handleSelectChange = useCallback(
+    (value: string) => setSelected(value),
+    [],
+  );
+
+  const options = [
+    { label: "Exclude", value: "exclude" },
+    { label: "Include", value: "include" },
+  ];
 
   useEffect(() => {
     if (actionData?.errors.length === 0) {
@@ -274,6 +304,7 @@ export default function ProductDiscountNew() {
             .split(",")
             .map((vendor: string) => vendor.trim()),
           collections: selectedCollections,
+          includeProductsInCollections: selected === "include",
         },
       };
 
@@ -364,6 +395,13 @@ export default function ProductDiscountNew() {
                     autoComplete="on"
                     {...configuration.excludedVendors}
                   />
+                  <Select
+                    label="Include or Exclude Products in Collections"
+                    options={options}
+                    onChange={handleSelectChange}
+                    value={selected}
+                  />
+                  <label>Select collections to include in discount</label>
                   <CollectionSelect
                     collections={loaderData.collections.edges}
                     selectedOptions={selectedCollections}
