@@ -29,7 +29,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
     const response = await admin.graphql(
       `#graphql
-        query getDeliveryCustomization($id: ID!) {
+        query getDeliveryCustomizationRename($id: ID!) {
           deliveryCustomization(id: $id) {
             id
             title
