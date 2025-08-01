@@ -9,7 +9,6 @@ query RunInput($selectedCollectionIds: [ID!]) {
         }
       }
       merchandise {
-        __typename
         ... on ProductVariant {
           id
           sku

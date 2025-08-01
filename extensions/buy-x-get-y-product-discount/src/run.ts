@@ -24,12 +24,31 @@ type Item = {
 };
 
 // helpers
+// filter line items by if in any collection
 // filter line items by metafield value to get qualifying items
-function getQualifyingItems(lines: RunInput["cart"]["lines"]) {
-  const qualifyingItems = lines.filter(
-    // @ts-ignore
-    (line) => line.merchandise?.buy2Get1FreeEligible?.value === "true",
-  );
+function getQualifyingItems(
+  lines: RunInput["cart"]["lines"],
+  includeExcludedVariantsInTotal: boolean,
+) {
+  // allow excluded items to be used to calculate the total, but they cannot be discounted.
+  const qualifyingItems = includeExcludedVariantsInTotal
+    ? lines.filter(
+        (line) =>
+          "product" in line.merchandise &&
+          line.merchandise.product.inAnyCollection,
+      )
+    : lines
+        .filter(
+          (line) =>
+            "product" in line.merchandise &&
+            line.merchandise.product.inAnyCollection,
+        )
+        .filter(
+          (line) =>
+            "product" in line.merchandise &&
+            line.merchandise.excludeFromAllDiscounts?.value !== "true",
+        );
+
   console.log("qualifyingItems to transform", qualifyingItems.length);
   // transform qualifying items into variants
   const qualifyingVariants = qualifyingItems.map((line: any) => {
@@ -37,6 +56,8 @@ function getQualifyingItems(lines: RunInput["cart"]["lines"]) {
       id: line.merchandise.id,
       quantity: line.quantity,
       price: parseFloat(line.cost.amountPerQuantity.amount),
+      excudeFromAllDiscounts:
+        line.merchandise.excludeFromAllDiscounts?.value === "true",
     };
   });
   // get total quantity of qualifying items
@@ -116,31 +137,44 @@ export function run(input: RunInput) {
     return EMPTY_DISCOUNT;
   }
 
+  const includeExcludedVariantsInTotal =
+    configuration?.includeExcludedVariantsInTotal
+      ? configuration.includeExcludedVariantsInTotal
+      : false;
+
   // start
   // get qualifying items and total quantity of qualifying items
-  const { qualifyingItems, total } = getQualifyingItems(input.cart.lines);
+  const { qualifyingItems, total } = getQualifyingItems(
+    input.cart.lines,
+    includeExcludedVariantsInTotal,
+  );
+
+  // filter out excluded items from qualifying items
+  // excluded items can be used to calculate the total, but they cannot be discounted.
+  const filteredItems = qualifyingItems.filter(
+    (item) => !item.excudeFromAllDiscounts,
+  );
 
   // sort qualifying items by price
-  const sortedItems = sortByPrice(qualifyingItems);
-  // console.log("sortedItems", JSON.stringify(sortedItems, null, 2));
+  const sortedItems = sortByPrice(filteredItems);
+  // const sortedItems = sortByPrice(qualifyingItems);
 
   // this will be the buy x get y discount values from the configuration
-  const buyX = 2;
-  const getY = 1;
+  const buyX = configuration.buyX;
+  const getY = configuration.getY;
 
   // calculate discount split for buy x get y discount
   const discountSplit = calculateDiscountSplit(total, buyX, getY);
-  console.log("discountSplit", JSON.stringify(discountSplit, null, 2));
+  console.log("total qualifying items (including excluded items):", total);
+  console.log("buyX", buyX);
+  console.log("getY", getY);
+  console.log("discount split", JSON.stringify(discountSplit, null, 2));
 
   // get variants to discount (use sorted items to get the cheapest items first) and use for input to apply discount
   const variantsToDiscount = getVariantsToDiscount(
     sortedItems,
     discountSplit.getY,
   );
-  // console.log(
-  //   "variantsToDiscount",
-  //   JSON.stringify(variantsToDiscount, null, 2),
-  // );
 
   if (!variantsToDiscount.length) {
     console.error("No cart lines qualify for buy x get y discount.");

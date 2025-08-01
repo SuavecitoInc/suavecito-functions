@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useForm, useField } from "@shopify/react-form";
@@ -31,6 +31,7 @@ import {
   PageActions,
   TextField,
   BlockStack,
+  Select,
 } from "@shopify/polaris";
 
 import shopify from "../shopify.server";
@@ -46,7 +47,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
   const automaticDiscountResponse = await admin.graphql(
     `#graphql
-        query getDiscountAutomaticNode($id: ID!) {
+        query getDiscountAutomaticNodeByID($id: ID!) {
           discountNode(id: $id) {
             id
             discount {
@@ -186,7 +187,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const selectedCollections = JSON.parse(
     discountNode.selectedCollections.value,
   );
-  console.log("SELECTED OLLECTIONS", selectedCollections);
+  console.log("SELECTED COLLECTIONS", selectedCollections);
 
   console.log("isAutomaticDiscount", isAutomaticDiscount);
 
@@ -204,6 +205,8 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
         excludedSkus: metafieldValue?.excludedSkus,
         excludedVendors: metafieldValue?.excludedVendors,
         selectedCollections: selectedCollections?.selectedCollectionIds ?? [],
+        includeProductsInCollections:
+          metafieldValue?.includeProductsInCollections ?? false,
       },
     }),
   };
@@ -226,6 +229,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     endsAt,
     configuration,
     metafield,
+    metafieldCollections,
   } = JSON.parse(formData.get("discount") as string);
 
   const baseDiscount = {
@@ -269,6 +273,15 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   percentage: configuration.percentage,
                   excludedSkus: configuration.excludedSkus,
                   excludedVendors: configuration.excludedVendors,
+                  includeProductsInCollections:
+                    configuration.includeProductsInCollections,
+                }),
+              },
+              {
+                id: metafieldCollections.id,
+                type: "json",
+                value: JSON.stringify({
+                  selectedCollectionIds: configuration.selectedCollections,
                 }),
               },
             ],
@@ -278,6 +291,10 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     );
 
     const responseJson = await response.json();
+    if (!responseJson.data) {
+      console.error("Error updating code discount");
+      return json({ errors: "Something went wrong" });
+    }
     const errors = responseJson.data.discountUpdate?.userErrors;
     return json({ errors });
   } else {
@@ -305,6 +322,14 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   percentage: configuration.percentage,
                   excludedSkus: configuration.excludedSkus,
                   excludedVendors: configuration.excludedVendors,
+                  includeProductsInCollections:
+                    configuration.includeProductsInCollections,
+                }),
+              },
+              {
+                id: metafieldCollections.id,
+                value: JSON.stringify({
+                  selectedCollectionIds: configuration.selectedCollections,
                 }),
               },
             ],
@@ -314,6 +339,10 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     );
 
     const responseJson = await response.json();
+    if (!responseJson.data) {
+      console.error("Error updating automatic discount");
+      return json({ errors: "Something went wrong" });
+    }
     const errors = responseJson.data.discountUpdate?.userErrors;
     return json({ errors });
   }
@@ -341,6 +370,24 @@ export default function ProductDiscount() {
   const [selectedCollections, setSelectedCollections] = useState<string[]>(
     discountConfiguration?.selectedCollections,
   );
+
+  // select options
+  const defaultSelected =
+    discountConfiguration?.includeProductsInCollections &&
+    discountConfiguration?.includeProductsInCollections === true
+      ? "include"
+      : "exclude";
+  const [selected, setSelected] = useState(defaultSelected);
+
+  const handleSelectChange = useCallback(
+    (value: string) => setSelected(value),
+    [],
+  );
+
+  const options = [
+    { label: "Exclude", value: "exclude" },
+    { label: "Include", value: "include" },
+  ];
 
   useEffect(() => {
     if (actionData?.errors.length === 0) {
@@ -422,14 +469,16 @@ export default function ProductDiscount() {
           excludedVendors: form.configuration.excludedVendors
             .split(",")
             .map((vendor: string) => vendor.trim()),
-          collections: selectedCollections,
+          selectedCollections,
+          includeProductsInCollections: selected === "include",
         },
         metafield: {
           id: discountNode?.metafield?.id,
         },
+        metafieldCollections: {
+          id: discountNode?.selectedCollections?.id,
+        },
       };
-
-      console.log("DISCOUNT", discount);
 
       submitForm({ discount: JSON.stringify(discount) }, { method: "post" });
 
@@ -516,6 +565,13 @@ export default function ProductDiscount() {
                     autoComplete="on"
                     {...configuration.excludedVendors}
                   />
+                  <Select
+                    label="Include or Exclude Products in Collections"
+                    options={options}
+                    onChange={handleSelectChange}
+                    value={selected}
+                  />
+                  <label>Select collections to include in discount</label>
                   <CollectionSelect
                     collections={collections.edges}
                     selectedOptions={selectedCollections}

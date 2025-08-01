@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useForm, useField } from "@shopify/react-form";
@@ -31,9 +31,11 @@ import {
   PageActions,
   TextField,
   BlockStack,
+  Checkbox,
 } from "@shopify/polaris";
 
 import shopify from "../shopify.server";
+import CollectionSelect from "~/components/CollectionSelect";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const { id } = params;
@@ -45,7 +47,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
   const automaticDiscountResponse = await admin.graphql(
     `#graphql
-        query getDiscountAutomaticNode($id: ID!) {
+        query getDiscountAutomaticBuyXGetYNodeByID($id: ID!) {
           discountNode(id: $id) {
             id
             discount {
@@ -152,6 +154,18 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
               id
               value
             }
+            selectedCollections: metafield(namespace: "$app:buy-x-get-y-product-discount", key: "selected-collections") {
+              id
+              value
+            }
+          }
+          collections(first: 250) {
+            edges {
+              node {
+                id
+                title
+              }
+            }
           }
         }`,
     {
@@ -168,6 +182,10 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     "DiscountAutomaticApp",
   );
   const metafieldValue = JSON.parse(discountNode.metafield.value);
+  const selectedCollections = JSON.parse(
+    discountNode.selectedCollections.value,
+  );
+  console.log("SELECTED COLLECTIONS", selectedCollections);
 
   console.log("isAutomaticDiscount", isAutomaticDiscount);
 
@@ -182,7 +200,11 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
         buyX: metafieldValue?.buyX,
         getY: metafieldValue?.getY,
         percentage: metafieldValue?.percentage,
+        includeExcludedVariantsInTotal:
+          metafieldValue?.includeExcludedVariantsInTotal ?? false,
+        selectedCollections: selectedCollections?.selectedCollectionIds ?? [],
       },
+      collections: responseJson.data.collections,
     }),
   };
 };
@@ -204,6 +226,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     endsAt,
     configuration,
     metafield,
+    metafieldCollections,
   } = JSON.parse(formData.get("discount") as string);
 
   const baseDiscount = {
@@ -246,6 +269,14 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   buyX: configuration.buyX,
                   getY: configuration.getY,
                   percentage: configuration.percentage,
+                  includeExcludedVariantsInTotal:
+                    configuration.includeExcludedVariantsInTotal,
+                }),
+              },
+              {
+                id: metafieldCollections.id,
+                value: JSON.stringify({
+                  selectedCollectionIds: configuration.selectedCollections,
                 }),
               },
             ],
@@ -255,6 +286,10 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     );
 
     const responseJson = await response.json();
+    if (!responseJson.data) {
+      console.error("Error updating code discount");
+      return json({ errors: "Something went wrong" });
+    }
     const errors = responseJson.data.discountUpdate?.userErrors;
     return json({ errors });
   } else {
@@ -283,6 +318,12 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   percentage: configuration.percentage,
                 }),
               },
+              {
+                id: metafieldCollections.id,
+                value: JSON.stringify({
+                  selectedCollectionIds: configuration.selectedCollections,
+                }),
+              },
             ],
           },
         },
@@ -290,6 +331,10 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     );
 
     const responseJson = await response.json();
+    if (!responseJson.data) {
+      console.error("Error updating automatic discount");
+      return json({ errors: "Something went wrong" });
+    }
     const errors = responseJson.data.discountUpdate?.userErrors;
     return json({ errors });
   }
@@ -310,8 +355,24 @@ export default function ProductDiscount() {
   const {
     discountNode,
     discountMethod: discountNodeMethod,
+    collections,
     configuration: discountConfiguration,
   } = JSON.parse(loaderData.body);
+
+  console.log("collections", collections);
+  console.log("selectedCollections", discountConfiguration.selectedCollections);
+
+  const [selectedCollections, setSelectedCollections] = useState<string[]>(
+    discountConfiguration?.selectedCollections,
+  );
+
+  const [checked, setChecked] = useState(
+    discountConfiguration?.includeExcludedVariantsInTotal ?? false,
+  );
+  const handleCheckboxChange = useCallback(
+    (newChecked: boolean) => setChecked(newChecked),
+    [],
+  );
 
   useEffect(() => {
     if (actionData?.errors.length === 0) {
@@ -383,13 +444,16 @@ export default function ProductDiscount() {
           buyX: parseInt(form.configuration.buyX),
           getY: parseInt(form.configuration.getY),
           percentage: parseFloat(form.configuration.percentage),
+          includeExcludedVariantsInTotal: checked,
+          selectedCollections,
         },
         metafield: {
           id: discountNode?.metafield?.id,
         },
+        metafieldCollections: {
+          id: discountNode?.selectedCollections?.id,
+        },
       };
-
-      console.log("DISCOUNT", discount);
 
       submitForm({ discount: JSON.stringify(discount) }, { method: "post" });
 
@@ -470,6 +534,17 @@ export default function ProductDiscount() {
                     autoComplete="on"
                     {...configuration.percentage}
                     suffix="%"
+                  />
+                  <Checkbox
+                    label="Include excluded variants in customer buys total"
+                    checked={checked}
+                    onChange={handleCheckboxChange}
+                  />
+                  <label>Select collections to include in discount</label>
+                  <CollectionSelect
+                    collections={collections.edges}
+                    selectedOptions={selectedCollections}
+                    setSelectedOptions={setSelectedCollections}
                   />
                 </BlockStack>
               </Card>

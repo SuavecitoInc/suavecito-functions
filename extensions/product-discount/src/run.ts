@@ -39,6 +39,8 @@ export function run(input: RunInput) {
     return EMPTY_DISCOUNT;
   }
 
+  console.log("Configuration", configuration);
+
   const excludedSkus = configuration.excludedSkus.map((sku: string) =>
     sku.toLowerCase(),
   );
@@ -47,15 +49,25 @@ export function run(input: RunInput) {
     vendor.toLowerCase(),
   );
 
+  const includeProductsInCollections =
+    configuration?.includeProductsInCollections ?? false;
+
   // to filter out subscriptions, we can use line.sellingPlanAllocation
-  const targets = input.cart.lines
-    // Use the configured quantity instead of a hardcoded value
-    // Exclude lines that are in any collection
-    .filter(
-      (line) =>
-        line.merchandise.__typename == "ProductVariant" &&
-        !line.merchandise.product.inAnyCollection,
-    )
+  const lines = includeProductsInCollections
+    ? // include lines that are in any selected collection
+      input.cart.lines.filter(
+        (line) =>
+          line.merchandise.__typename == "ProductVariant" &&
+          line.merchandise.product.inAnyCollection,
+      )
+    : // exclude lines that are in any selected collection
+      input.cart.lines.filter(
+        (line) =>
+          line.merchandise.__typename == "ProductVariant" &&
+          !line.merchandise.product.inAnyCollection,
+      );
+
+  const targets = lines
     .filter(
       (line) =>
         line.quantity >= configuration.quantity &&
