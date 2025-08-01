@@ -6,7 +6,7 @@
 
 ## Unreleased
 
-## v0.0.4 - 2025-07-30
+## v0.0.5 - 2025-07-31
 
 **Breaking Changes**
 
