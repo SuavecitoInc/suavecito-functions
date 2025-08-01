@@ -14,6 +14,8 @@ import {
 } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 
+const version = "v0.0.5";
+
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   await authenticate.admin(request);
 
@@ -305,7 +307,7 @@ export default function Index() {
                         target="_blank"
                         removeUnderline
                       >
-                        v.0.0.4
+                        {version}
                       </Link>
                     </InlineStack>
                   </BlockStack>
