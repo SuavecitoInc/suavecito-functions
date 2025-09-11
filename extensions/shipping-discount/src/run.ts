@@ -48,6 +48,32 @@ export function run(input: RunInput): FunctionRunResult {
     return EMPTY_DISCOUNT;
   }
 
+  // check if any items in the cart have a metafield that excludes them from free shipping for the current ship country
+  const freeShippingExcludedShipCountries: string[] = [];
+  input.cart.lines.forEach((line) => {
+    let freeShippingExclusions = undefined;
+    if (line?.merchandise && "freeShippingExclusions" in line.merchandise) {
+      freeShippingExclusions = line.merchandise.freeShippingExclusions;
+      if (freeShippingExclusions && freeShippingExclusions.jsonValue) {
+        const exclusions = freeShippingExclusions.jsonValue as string[];
+        exclusions.forEach((exclusion) => {
+          if (!freeShippingExcludedShipCountries.includes(exclusion)) {
+            freeShippingExcludedShipCountries.push(exclusion);
+          }
+        });
+      }
+    }
+  });
+
+  console.log(
+    "FREE SHIPPING EXCLUDED SHIP COUNTRIES",
+    freeShippingExcludedShipCountries,
+  );
+  if (freeShippingExcludedShipCountries.includes(shipCountryCode!)) {
+    console.log("COUNTRY IS EXCLUDED FROM FREE SHIPPING BY VARIANT METAFIELD");
+    return EMPTY_DISCOUNT;
+  }
+
   // check if there are subscription items in the cart
   const hasSubscriptionItems = input.cart.lines.some(
     (line) =>
