@@ -36,6 +36,17 @@ query RunInput {
           name
         }
       }
+      merchandise {
+        ... on ProductVariant {
+          freeShippingExclusions: metafield(
+            namespace: "suavecito_function"
+            key: "free_shipping_country_exclusions"
+          ) {
+            value
+            jsonValue
+          }
+        }
+      }
     }
     deliveryGroups {
       deliveryAddress {
