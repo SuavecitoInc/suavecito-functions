@@ -8,6 +8,32 @@
 
 [Shopify Functions Overview](https://shopify.dev/docs/apps/functions)
 
+This app depends on 2 variant metafields:
+
+<table>
+  <tr>
+    <th>Namespace</th>
+    <th>Key</th>
+    <th>Description</th>
+    <th>Type</th>
+    <th>Example Value(s)</th>
+  </tr>
+  <tr>
+    <td>suavecito_function</td>
+    <td>exclude_from_all_discounts</td>
+    <td>Exclude variant from all discounts created by the Suavecito Functions App.</td>
+    <td>Boolean</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>suavecito_function</td>
+    <td>free_shipping_country_exclusions</td>
+    <td>Exclude variant from free shipping to specific countries.</td>
+    <td>Single Line Text (Reference List)</td>
+    <td>CA, MX, US</td>
+  </tr>
+</table>
+
 ## Dev
 
 ```bash
@@ -83,7 +109,7 @@ Buy X Get Y Product Discount (Percent Off)
 
 - This function creates a simple (really basic) Buy X Get Y product discount
 - The function takes 3 arguments: Buy X (number of products), Get Y (number of products), and Percentage (discount percentage)
-- The function will handle the rest of the logic. Including the discount split. Eligible products depend on a variant metafield: `variant.metafields.debut.enable_b2g1f` \*\* metafield namespace and key could change
+- The function will handle the rest of the logic. Including the discount split.
   - Ex: Buy 2 Get 1 Free. Input = 5 eligible products, Discount Split = 4 Paid, 1 Free.
   - Ex: Buy 2 Get 1 Free. Input = 6 eligible products, Discount Split = 4 Paid, 2 Free.
 

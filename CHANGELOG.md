@@ -6,6 +6,13 @@
 
 ## Unreleased
 
+## v0.0.6 = 2025-09-12
+
+**Breaking Changes**
+
+- The FREE Shipping Discount can now be excluded by variant metafield.
+  - A variant can be excluded from the FREE Shipping discount by setting the `Free Shipping Country Exclusions` variant metafield. \*\* This will exclude the whole order from free shipping if the variant is in the cart.
+
 ## v0.0.5 - 2025-07-31
 
 **Breaking Changes**
@@ -40,7 +47,7 @@
 - Buy X Get Y Product Discount
   - This function creates a simple (really basic) Buy X Get Y product discount
   - The function takes 3 arguments: Buy X (number of products), Get Y (number of products), and Percentage (discount percentage)
-  - The function will handle the rest of the logic. Including the discount split. Eligible products depend on a variant metafield: `variant.metafields.debut.enable_b2g1f` \*\* metafield namespace and key could change
+  - The function will handle the rest of the logic. Including the discount split.
     - Ex: Buy 2 Get 1 Free. Input = 5 eligible products, Discount Split = 4 Paid, 1 Free.
     - Ex: Buy 2 Get 1 Free. Input = 6 eligible products, Discount Split = 4 Paid, 2 Free.
 
