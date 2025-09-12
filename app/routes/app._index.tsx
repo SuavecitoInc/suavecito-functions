@@ -14,7 +14,7 @@ import {
 } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 
-const version = "v0.0.5";
+const version = "v0.0.6";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   await authenticate.admin(request);
@@ -144,10 +144,7 @@ export default function Index() {
                       </List.Item>
                       <List.Item>
                         The function will handle the rest of the logic.
-                        Including the discount split. Eligible products depend
-                        on a variant metafield:{" "}
-                        <strong>variant.metafields.debut.enable_b2g1f</strong>{" "}
-                        <i>** metafield namespace and key could change</i>
+                        Including the discount split.
                       </List.Item>
                     </List>
                   </BlockStack>
@@ -179,6 +176,13 @@ export default function Index() {
                         priced shipping option from the currently available
                         options, and it will discount it by the selected
                         discount percentage
+                      </List.Item>
+                      <List.Item>
+                        A variant can be excluded from the FREE Shipping
+                        discount by setting the `Free Shipping Country
+                        Exclusions` variant metafield. ** This will exclude the
+                        whole order from free shipping if the variant is in the
+                        cart.
                       </List.Item>
                       <List.Item>
                         <strong>Example use case: </strong>

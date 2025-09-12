@@ -69,7 +69,11 @@ export function run(input: RunInput): FunctionRunResult {
     "FREE SHIPPING EXCLUDED SHIP COUNTRIES",
     freeShippingExcludedShipCountries,
   );
-  if (freeShippingExcludedShipCountries.includes(shipCountryCode!)) {
+  // if the current ship country is in the list of excluded countries, do not apply the FREE shipping discount
+  if (
+    percentage === 100 &&
+    freeShippingExcludedShipCountries.includes(shipCountryCode!)
+  ) {
     console.log("COUNTRY IS EXCLUDED FROM FREE SHIPPING BY VARIANT METAFIELD");
     return EMPTY_DISCOUNT;
   }
