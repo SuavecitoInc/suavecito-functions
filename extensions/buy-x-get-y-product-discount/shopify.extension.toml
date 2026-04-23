@@ -4,6 +4,7 @@ api_version = "2025-07"
 handle = "buy-x-get-y-product-discount"
 name = "t:name"
 description = "t:description"
+uid = "9f4a81d1-3e7d-d7d9-9d36-70e0cfc6cc0190c9ca72"
 type = "function"
 
   [[extensions.targeting]]

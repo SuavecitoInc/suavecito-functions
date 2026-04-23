@@ -4,6 +4,7 @@ api_version = "2025-07"
 handle = "delivery-option-rename"
 name = "t:name"
 description = "t:description"
+uid = "9bafcddb-5f2f-988c-ef70-17426ae5da6e8d2c1402"
 type = "function"
 
   [[extensions.targeting]]

@@ -41,6 +41,23 @@ export function run(input: RunInput) {
 
   console.log("Configuration", configuration);
 
+  // exclude if the buyer is b2b
+  const purchasingCompany = input.cart.buyerIdentity?.purchasingCompany;
+  console.log("Buyer identity purchasing company:", purchasingCompany);
+  if (purchasingCompany) {
+    console.log(
+      `Buyer is associated with purchasing company ${purchasingCompany.company.name}, excluding from discount.`,
+    );
+    return EMPTY_DISCOUNT;
+  }
+
+  const isPOS = input.cart.attribute?.value === "pos";
+  console.log("Cart attribute value for _source:", input.cart.attribute?.value);
+  if (isPOS) {
+    console.log("Cart is from POS, excluding from discount.");
+    return EMPTY_DISCOUNT;
+  }
+
   const excludedSkus = configuration.excludedSkus.map((sku: string) =>
     sku.toLowerCase(),
   );

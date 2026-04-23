@@ -8,6 +8,7 @@ api_version = "2025-07"
 [[extensions]]
 name = "custom-banner"
 handle = "custom-banner"
+uid = "a11df538-16bc-a14a-1837-409727d7e91c41df6800"
 type = "ui_extension"
 
 

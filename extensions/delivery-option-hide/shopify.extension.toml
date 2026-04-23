@@ -4,6 +4,7 @@ api_version = "2025-07"
 handle = "delivery-option-hide"
 name = "t:name"
 description = "t:description"
+uid = "e984a3de-5fb0-281c-afa9-8752b5a4d398be70b7ad"
 type = "function"
 
   [[extensions.targeting]]
