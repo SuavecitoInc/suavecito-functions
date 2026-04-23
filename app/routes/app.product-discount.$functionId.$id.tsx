@@ -31,6 +31,7 @@ import {
   PageActions,
   TextField,
   BlockStack,
+  Checkbox,
   Select,
 } from "@shopify/polaris";
 
@@ -204,6 +205,8 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
         percentage: metafieldValue?.percentage,
         excludedSkus: metafieldValue?.excludedSkus,
         excludedVendors: metafieldValue?.excludedVendors,
+        excludeB2B: metafieldValue?.excludeB2B ?? false,
+        excludePOS: metafieldValue?.excludePOS ?? false,
         selectedCollections: selectedCollections?.selectedCollectionIds ?? [],
         includeProductsInCollections:
           metafieldValue?.includeProductsInCollections ?? false,
@@ -273,6 +276,8 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   percentage: configuration.percentage,
                   excludedSkus: configuration.excludedSkus,
                   excludedVendors: configuration.excludedVendors,
+                  excludeB2B: configuration.excludeB2B,
+                  excludePOS: configuration.excludePOS,
                   includeProductsInCollections:
                     configuration.includeProductsInCollections,
                 }),
@@ -322,6 +327,8 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   percentage: configuration.percentage,
                   excludedSkus: configuration.excludedSkus,
                   excludedVendors: configuration.excludedVendors,
+                  excludeB2B: configuration.excludeB2B,
+                  excludePOS: configuration.excludePOS,
                   includeProductsInCollections:
                     configuration.includeProductsInCollections,
                 }),
@@ -448,6 +455,8 @@ export default function ProductDiscount() {
         excludedVendors: useField(
           discountConfiguration?.excludedVendors.toString() ?? "",
         ),
+        excludeB2B: useField(discountConfiguration?.excludeB2B ?? false),
+        excludePOS: useField(discountConfiguration?.excludePOS ?? false),
       },
     },
     onSubmit: async (form) => {
@@ -469,6 +478,8 @@ export default function ProductDiscount() {
           excludedVendors: form.configuration.excludedVendors
             .split(",")
             .map((vendor: string) => vendor.trim()),
+          excludeB2B: form.configuration.excludeB2B,
+          excludePOS: form.configuration.excludePOS,
           selectedCollections,
           includeProductsInCollections: selected === "include",
         },
@@ -564,6 +575,16 @@ export default function ProductDiscount() {
                     label="Excluded Vendors (comma separated)"
                     autoComplete="on"
                     {...configuration.excludedVendors}
+                  />
+                  <Checkbox
+                    label="Exclude B2B"
+                    checked={configuration.excludeB2B.value}
+                    onChange={configuration.excludeB2B.onChange}
+                  />
+                  <Checkbox
+                    label="Exclude POS"
+                    checked={configuration.excludePOS.value}
+                    onChange={configuration.excludePOS.onChange}
                   />
                   <Select
                     label="Include or Exclude Products in Collections"
