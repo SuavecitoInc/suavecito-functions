@@ -125,8 +125,11 @@ export function run(input: RunInput) {
   /**
    * @type {{
    *   buyX: number
-   *  getX: number
+   *   getY: number
    *   percentage: number
+   *   includeExcludedVariantsInTotal?: boolean
+   *   excludeB2B?: boolean
+   *   excludePOS?: boolean
    * }}
    */
   const configuration = JSON.parse(
@@ -134,6 +137,25 @@ export function run(input: RunInput) {
   );
 
   if (!configuration.buyX || !configuration.getY || !configuration.percentage) {
+    return EMPTY_DISCOUNT;
+  }
+
+  const excludeB2B = configuration.excludeB2B ?? false;
+  const excludePOS = configuration.excludePOS ?? false;
+
+  const purchasingCompany = input.cart.buyerIdentity?.purchasingCompany;
+  console.log("Buyer identity purchasing company:", purchasingCompany);
+  if (excludeB2B && purchasingCompany) {
+    console.log(
+      `Buyer is associated with purchasing company ${purchasingCompany.company.name}, excluding from discount.`,
+    );
+    return EMPTY_DISCOUNT;
+  }
+
+  const isPOS = input.cart.attribute?.value === "pos";
+  console.log("Cart attribute value for _source:", input.cart.attribute?.value);
+  if (excludePOS && isPOS) {
+    console.log("Cart is from POS, excluding from discount.");
     return EMPTY_DISCOUNT;
   }
 
