@@ -202,6 +202,8 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
         percentage: metafieldValue?.percentage,
         includeExcludedVariantsInTotal:
           metafieldValue?.includeExcludedVariantsInTotal ?? false,
+        excludeB2B: metafieldValue?.excludeB2B ?? false,
+        excludePOS: metafieldValue?.excludePOS ?? false,
         selectedCollections: selectedCollections?.selectedCollectionIds ?? [],
       },
       collections: responseJson.data.collections,
@@ -271,6 +273,8 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   percentage: configuration.percentage,
                   includeExcludedVariantsInTotal:
                     configuration.includeExcludedVariantsInTotal,
+                  excludeB2B: configuration.excludeB2B,
+                  excludePOS: configuration.excludePOS,
                 }),
               },
               {
@@ -316,6 +320,10 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   buyX: configuration.buyX,
                   getY: configuration.getY,
                   percentage: configuration.percentage,
+                  includeExcludedVariantsInTotal:
+                    configuration.includeExcludedVariantsInTotal,
+                  excludeB2B: configuration.excludeB2B,
+                  excludePOS: configuration.excludePOS,
                 }),
               },
               {
@@ -371,6 +379,22 @@ export default function ProductDiscount() {
   );
   const handleCheckboxChange = useCallback(
     (newChecked: boolean) => setChecked(newChecked),
+    [],
+  );
+
+  const [excludeB2BChecked, setExcludeB2BChecked] = useState(
+    discountConfiguration?.excludeB2B ?? false,
+  );
+  const handleExcludeB2BCheckboxChange = useCallback(
+    (newChecked: boolean) => setExcludeB2BChecked(newChecked),
+    [],
+  );
+
+  const [excludePOSChecked, setExcludePOSChecked] = useState(
+    discountConfiguration?.excludePOS ?? false,
+  );
+  const handleExcludePOSCheckboxChange = useCallback(
+    (newChecked: boolean) => setExcludePOSChecked(newChecked),
     [],
   );
 
@@ -445,6 +469,8 @@ export default function ProductDiscount() {
           getY: parseInt(form.configuration.getY),
           percentage: parseFloat(form.configuration.percentage),
           includeExcludedVariantsInTotal: checked,
+          excludeB2B: excludeB2BChecked,
+          excludePOS: excludePOSChecked,
           selectedCollections,
         },
         metafield: {
@@ -539,6 +565,16 @@ export default function ProductDiscount() {
                     label="Include excluded variants in customer buys total"
                     checked={checked}
                     onChange={handleCheckboxChange}
+                  />
+                  <Checkbox
+                    label="Exclude B2B"
+                    checked={excludeB2BChecked}
+                    onChange={handleExcludeB2BCheckboxChange}
+                  />
+                  <Checkbox
+                    label="Exclude POS"
+                    checked={excludePOSChecked}
+                    onChange={handleExcludePOSCheckboxChange}
                   />
                   <label>Select collections to include in discount</label>
                   <CollectionSelect

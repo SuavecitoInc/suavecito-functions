@@ -132,6 +132,8 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   percentage: configuration.percentage,
                   includeExcludedVariantsInTotal:
                     configuration.includeExcludedVariantsInTotal,
+                  excludeB2B: configuration.excludeB2B,
+                  excludePOS: configuration.excludePOS,
                 }),
               },
               {
@@ -182,6 +184,8 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   percentage: configuration.percentage,
                   includeExcludedVariantsInTotal:
                     configuration.includeExcludedVariantsInTotal,
+                  excludeB2B: configuration.excludeB2B,
+                  excludePOS: configuration.excludePOS,
                 }),
               },
               {
@@ -227,6 +231,18 @@ export default function BuyXGetYProductDiscountNew() {
   const [checked, setChecked] = useState(false);
   const handleCheckboxChange = useCallback(
     (newChecked: boolean) => setChecked(newChecked),
+    [],
+  );
+
+  const [excludeB2BChecked, setExcludeB2BChecked] = useState(false);
+  const handleExcludeB2BCheckboxChange = useCallback(
+    (newChecked: boolean) => setExcludeB2BChecked(newChecked),
+    [],
+  );
+
+  const [excludePOSChecked, setExcludePOSChecked] = useState(false);
+  const handleExcludePOSCheckboxChange = useCallback(
+    (newChecked: boolean) => setExcludePOSChecked(newChecked),
     [],
   );
 
@@ -291,6 +307,8 @@ export default function BuyXGetYProductDiscountNew() {
           getY: parseInt(form.configuration.getY),
           percentage: parseFloat(form.configuration.percentage),
           includeExcludedVariantsInTotal: checked,
+          excludeB2B: excludeB2BChecked,
+          excludePOS: excludePOSChecked,
           collections: selectedCollections,
         },
       };
@@ -381,6 +399,16 @@ export default function BuyXGetYProductDiscountNew() {
                     label="Include excluded variants in customer buys total"
                     checked={checked}
                     onChange={handleCheckboxChange}
+                  />
+                  <Checkbox
+                    label="Exclude B2B"
+                    checked={excludeB2BChecked}
+                    onChange={handleExcludeB2BCheckboxChange}
+                  />
+                  <Checkbox
+                    label="Exclude POS"
+                    checked={excludePOSChecked}
+                    onChange={handleExcludePOSCheckboxChange}
                   />
                   <label>Select collections to include in discount</label>
                   <CollectionSelect
