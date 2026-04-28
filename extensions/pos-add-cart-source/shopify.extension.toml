@@ -1,0 +1,20 @@
+
+api_version = "2025-07"
+
+[[extensions]]
+type = "ui_extension"
+# Change the merchant-facing name of the extension in locales/en.default.json
+name = "t:name"
+uid = "a11f207f-a84a-8b73-a8d1-af983bae666da6711ffe"
+handle = "pos-add-cart-source"
+description = "Add source to cart."
+
+# module: file that contains your extension’s source code
+# target: location where your extension appears in POS
+[[extensions.targeting]]
+module = "./src/Tile.tsx"
+target = "pos.home.tile.render"
+
+[[extensions.targeting]]
+module = "./src/Modal.tsx"
+target = "pos.home.modal.render"

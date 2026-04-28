@@ -29,6 +29,9 @@ export function run(input: RunInput) {
    *   percentage: number
    *   excludedSkus: string[]
    *   excludedVendors: string[]
+   *   excludeB2B?: boolean
+   *   excludePOS?: boolean
+   *   includeProductsInCollections?: boolean
    * }}
    */
   const configuration = JSON.parse(
@@ -41,12 +44,32 @@ export function run(input: RunInput) {
 
   console.log("Configuration", configuration);
 
-  const excludedSkus = configuration.excludedSkus.map((sku: string) =>
+  const excludeB2B = configuration.excludeB2B ?? false;
+  const excludePOS = configuration.excludePOS ?? false;
+
+  // exclude if the buyer is b2b
+  const purchasingCompany = input.cart.buyerIdentity?.purchasingCompany;
+  console.log("Buyer identity purchasing company:", purchasingCompany);
+  if (excludeB2B && purchasingCompany) {
+    console.log(
+      `Buyer is associated with purchasing company ${purchasingCompany.company.name}, excluding from discount.`,
+    );
+    return EMPTY_DISCOUNT;
+  }
+
+  const isPOS = input.cart.attribute?.value === "pos";
+  console.log("Cart attribute value for _source:", input.cart.attribute?.value);
+  if (excludePOS && isPOS) {
+    console.log("Cart is from POS, excluding from discount.");
+    return EMPTY_DISCOUNT;
+  }
+
+  const excludedSkus = (configuration.excludedSkus ?? []).map((sku: string) =>
     sku.toLowerCase(),
   );
 
-  const excludedVendors = configuration.excludedVendors.map((vendor: string) =>
-    vendor.toLowerCase(),
+  const excludedVendors = (configuration.excludedVendors ?? []).map(
+    (vendor: string) => vendor.toLowerCase(),
   );
 
   const includeProductsInCollections =

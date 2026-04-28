@@ -3,6 +3,7 @@ api_version = "2025-07"
 [[extensions]]
 name = "t:name"
 handle = "shipping-discount"
+uid = "9819460b-f956-a05b-6f7a-1fcb44ef82e108434317"
 type = "function"
 
 description = "t:description"

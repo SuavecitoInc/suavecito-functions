@@ -1,5 +1,22 @@
 query RunInput($selectedCollectionIds: [ID!]) {
   cart {
+    attribute(key: "_source") {
+      value
+    }
+    buyerIdentity {
+      purchasingCompany {
+        company {
+          id
+          name
+        }
+        location {
+          id
+        }
+        contact {
+          id
+        }
+      }
+    }
     lines {
       quantity
       cost {
