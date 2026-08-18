@@ -29,6 +29,7 @@ export function run(input: RunInput) {
    *   percentage: number
    *   excludedSkus: string[]
    *   excludedVendors: string[]
+   *   excludeOnlineStore?: boolean
    *   excludeB2B?: boolean
    *   excludePOS?: boolean
    *   includeProductsInCollections?: boolean
@@ -44,6 +45,7 @@ export function run(input: RunInput) {
 
   console.log("Configuration", configuration);
 
+  const excludeOnlineStore = configuration.excludeOnlineStore ?? false;
   const excludeB2B = configuration.excludeB2B ?? false;
   const excludePOS = configuration.excludePOS ?? false;
 
@@ -57,10 +59,18 @@ export function run(input: RunInput) {
     return EMPTY_DISCOUNT;
   }
 
+  // exclude if the cart is from POS
   const isPOS = input.cart.attribute?.value === "pos";
   console.log("Cart attribute value for _source:", input.cart.attribute?.value);
   if (excludePOS && isPOS) {
     console.log("Cart is from POS, excluding from discount.");
+    return EMPTY_DISCOUNT;
+  }
+
+  // exclude if the cart is from Online Store
+  const isOnlineStore = !isPOS && !purchasingCompany; // Assuming that if it's not POS and not B2B, it's from Online Store
+  if (excludeOnlineStore && isOnlineStore) {
+    console.log("Cart is from Online Store, excluding from discount.");
     return EMPTY_DISCOUNT;
   }
 

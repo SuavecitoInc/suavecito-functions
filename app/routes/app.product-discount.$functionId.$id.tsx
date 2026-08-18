@@ -205,6 +205,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
         percentage: metafieldValue?.percentage,
         excludedSkus: metafieldValue?.excludedSkus,
         excludedVendors: metafieldValue?.excludedVendors,
+        excludeOnlineStore: metafieldValue?.excludeOnlineStore ?? false,
         excludeB2B: metafieldValue?.excludeB2B ?? false,
         excludePOS: metafieldValue?.excludePOS ?? false,
         selectedCollections: selectedCollections?.selectedCollectionIds ?? [],
@@ -276,6 +277,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   percentage: configuration.percentage,
                   excludedSkus: configuration.excludedSkus,
                   excludedVendors: configuration.excludedVendors,
+                  excludeOnlineStore: configuration.excludeOnlineStore,
                   excludeB2B: configuration.excludeB2B,
                   excludePOS: configuration.excludePOS,
                   includeProductsInCollections:
@@ -327,6 +329,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   percentage: configuration.percentage,
                   excludedSkus: configuration.excludedSkus,
                   excludedVendors: configuration.excludedVendors,
+                  excludeOnlineStore: configuration.excludeOnlineStore,
                   excludeB2B: configuration.excludeB2B,
                   excludePOS: configuration.excludePOS,
                   includeProductsInCollections:
@@ -455,6 +458,9 @@ export default function ProductDiscount() {
         excludedVendors: useField(
           discountConfiguration?.excludedVendors.toString() ?? "",
         ),
+        excludeOnlineStore: useField(
+          discountConfiguration?.excludeOnlineStore ?? false,
+        ),
         excludeB2B: useField(discountConfiguration?.excludeB2B ?? false),
         excludePOS: useField(discountConfiguration?.excludePOS ?? false),
       },
@@ -478,6 +484,7 @@ export default function ProductDiscount() {
           excludedVendors: form.configuration.excludedVendors
             .split(",")
             .map((vendor: string) => vendor.trim()),
+          excludeOnlineStore: form.configuration.excludeOnlineStore,
           excludeB2B: form.configuration.excludeB2B,
           excludePOS: form.configuration.excludePOS,
           selectedCollections,
@@ -575,6 +582,11 @@ export default function ProductDiscount() {
                     label="Excluded Vendors (comma separated)"
                     autoComplete="on"
                     {...configuration.excludedVendors}
+                  />
+                  <Checkbox
+                    label="Exclude Online Store"
+                    checked={configuration.excludeOnlineStore.value}
+                    onChange={configuration.excludeOnlineStore.onChange}
                   />
                   <Checkbox
                     label="Exclude B2B"
