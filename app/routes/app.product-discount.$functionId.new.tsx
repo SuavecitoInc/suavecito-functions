@@ -130,6 +130,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   percentage: configuration.percentage,
                   excludedSkus: configuration.excludedSkus,
                   excludedVendors: configuration.excludedVendors,
+                  excludeOnlineStore: configuration.excludeOnlineStore,
                   excludeB2B: configuration.excludeB2B,
                   excludePOS: configuration.excludePOS,
                   includeProductsInCollections:
@@ -183,6 +184,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
                   percentage: configuration.percentage,
                   excludedSkus: configuration.excludedSkus,
                   excludedVendors: configuration.excludedVendors,
+                  excludeOnlineStore: configuration.excludeOnlineStore,
                   excludeB2B: configuration.excludeB2B,
                   excludePOS: configuration.excludePOS,
                   includeProductsInCollections:
@@ -287,6 +289,7 @@ export default function ProductDiscountNew() {
         percentage: useField("0"),
         excludedSkus: useField(""),
         excludedVendors: useField(""),
+        excludeOnlineStore: useField(false),
         excludeB2B: useField(false),
         excludePOS: useField(false),
       },
@@ -310,6 +313,7 @@ export default function ProductDiscountNew() {
           excludedVendors: form.configuration.excludedVendors
             .split(",")
             .map((vendor: string) => vendor.trim()),
+          excludeOnlineStore: form.configuration.excludeOnlineStore,
           excludeB2B: form.configuration.excludeB2B,
           excludePOS: form.configuration.excludePOS,
           collections: selectedCollections,
@@ -403,6 +407,11 @@ export default function ProductDiscountNew() {
                     label="Excluded Vendors (comma separated)"
                     autoComplete="on"
                     {...configuration.excludedVendors}
+                  />
+                  <Checkbox
+                    label="Exclude Online Store"
+                    checked={configuration.excludeOnlineStore.value}
+                    onChange={configuration.excludeOnlineStore.onChange}
                   />
                   <Checkbox
                     label="Exclude B2B"
